@@ -30,5 +30,5 @@ persona_instrs = {
 }
 for persona in persona_instrs:
     persona_instrs[persona] += "\n" + "I am a programmer and you are tasked"
-    persona_instrs[persona] += " to be my translator, say what I said"
+    persona_instrs[persona] += " to be my translator, say what I said "
     persona_instrs[persona] += "in your own way"
