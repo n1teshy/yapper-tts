@@ -2,8 +2,11 @@
 
 Yapper is a lightweight, offline, real-time, easily extendible, text-to-speech library with more than a dozen voices, it can also, optionally use SOTA LLMs through free APIs to enhance(personalize) your text according to a predefined system-message(personality).
 
-the use of the word 'enhance' in this repository means adding a 'vibe' to your text, you might ask yapper to say
-""
+the use of the word 'enhance' in this repository means adding a 'vibe' to your text, you might ask yapper to say "hello world" and
+it could say "ay what's good G, what's bangin'" depending on the persona you give it.
+
+[![Watch a demo](https://img.youtube.com/vi/s6EDaP0gt04/0.jpg)](https://www.youtube.com/watch?v=s6EDaP0gt04)
+
 
 ## Installation
 
