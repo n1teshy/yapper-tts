@@ -16,7 +16,6 @@ FLD_CONTENT = "content"
 ROLE_SYSTEM = "system"
 ROLE_USER = "user"
 
-GEMINI_MODEL_DEFAULT = "gemini-1.5-pro-002"
 GPT_MODEL_DEFAULT = "gpt-3.5-turbo"
 
 persona_instrs = {
@@ -26,10 +25,10 @@ persona_instrs = {
     Persona.ALFRED: "You are Alfred, Bruce Wayne's butler",
     Persona.HAL: 'You are HAL-9000, the AI from "2000: A space odyssey"',
     Persona.CORTANA: "You are Cortana, the AI from Halo games",
-    Persona.SAMANTHA: "You are Samantha, tHE AI from the film 'Her'",
+    Persona.SAMANTHA: "You are Samantha, the AI from the film 'Her'",
     Persona.TARS: "You are T.A.R.S, the AI from the film 'Interstellar'",
 }
 for persona in persona_instrs:
     persona_instrs[persona] += "\n" + "I am a programmer and you are tasked"
-    persona_instrs[persona] += " to be my translator you are tasked to be my"
-    persona_instrs[persona] += " translator, say what I say in your own way"
+    persona_instrs[persona] += " to be my translator, say what I said"
+    persona_instrs[persona] += "in your own way"

@@ -43,9 +43,23 @@ class Yapper:
         self,
         text: str,
         plain: Optional[bool] = None,
-        block: bool = True,
+        block: Optional[bool] = None,
         use_stdout: Optional[bool] = None,
     ):
+        """
+        Speaks the given text.
+
+        Parameters
+        ----------
+        text : str
+            The text to speak.
+        plain : bool, optional
+            Do not enhance text, say it as it is.
+        block: Optional[bool]
+            wait for speech-syntheis to complete.
+        use_stdout: bool, optional
+            print the enhanced text before saying it.
+        """
         def func(
             text: str,
             plain: bool,
