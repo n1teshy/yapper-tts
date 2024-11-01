@@ -13,7 +13,7 @@ it could say "ay what's good G, what's bangin'" depending on the persona you giv
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install yapper.
 
 ```bash
-pip install yapper
+pip install yapper-tts
 ```
 
 ## Usage
