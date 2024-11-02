@@ -60,18 +60,18 @@ class Yapper:
         use_stdout: bool, optional
             print the enhanced text before saying it.
         """
+        if plain is None:
+            plain = self.plain
+        if block is None:
+            block = self.block
+        if use_stdout is None:
+            use_stdout = self.use_stdout
+
         def func(
             text: str,
             plain: bool,
-            block: bool,
-            use_stdout: Optional[bool] = None,
+            use_stdout: bool,
         ):
-            if plain is None:
-                plain = self.plain
-            if block is None:
-                block = self.block
-            if use_stdout is None:
-                use_stdout = self.use_stdout
             if not plain:
                 text = self.enhancer.enhance(text)
             if use_stdout:
@@ -79,10 +79,10 @@ class Yapper:
             self.speaker.say(text)
 
         if block:
-            func(text, plain, block, use_stdout)
+            func(text, plain, use_stdout)
         else:
             threading.Thread(
-                target=func, args=(text, plain, block, use_stdout)
+                target=func, args=(text, plain, use_stdout)
             ).start()
 
     def __enter__(self):
