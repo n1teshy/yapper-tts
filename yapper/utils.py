@@ -37,19 +37,19 @@ def get_random_name(length=10):
     return "".join(random.choices(string.ascii_letters, k=length))
 
 
-def progress_bar(block_idx, block_size, total_bytes):
+def progress_hook(block_idx, block_size, total_bytes):
     part = min(((block_idx + 1) * block_size) / total_bytes, 1)
-    progress_bar = "=" * int(60 * part)
-    padding = " " * (60 - len(progress_bar))
-    print("\r|" + progress_bar + padding + "|", end="")
+    progress = "=" * int(60 * part)
+    padding = " " * (60 - len(progress))
+    print("\r|" + progress + padding + "|", end="")
 
 
 def download(url, file):
-    urlretrieve(url, file, reporthook=progress_bar)
+    urlretrieve(url, file, reporthook=progress_hook)
     print("")
 
 
-def download_piper():
+def install_piper():
     if (APP_DIR / "piper").exists():
         return
     zip_path = APP_DIR / "piper.zip"

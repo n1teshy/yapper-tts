@@ -9,7 +9,7 @@ from yapper.enums import PiperQuality, PiperVoice
 from yapper.utils import (
     APP_DIR,
     PLATFORM,
-    download_piper,
+    install_piper,
     download_piper_model,
     get_random_name
 )
@@ -98,7 +98,7 @@ class PiperSpeaker(BaseSpeaker):
         assert (
             quality in PiperQuality
         ), f"quality must be one of {', '.join(PiperQuality)}"
-        download_piper()
+        install_piper()
         self.exe_path = str(
             APP_DIR
             / "piper"
