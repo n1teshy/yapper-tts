@@ -11,7 +11,7 @@ from yapper.utils import (
     PLATFORM,
     install_piper,
     download_piper_model,
-    get_random_name
+    get_random_name,
 )
 
 # suppresses pygame's welcome message
@@ -75,29 +75,54 @@ class DefaultSpeaker(BaseSpeaker):
 
 
 class PiperSpeaker(BaseSpeaker):
+    # Mapping of voices to their highest supported quality
+    VOICE_QUALITY_MAP = {
+        PiperVoice.ARCTIC: PiperQuality.MEDIUM,
+        PiperVoice.BRYCE: PiperQuality.MEDIUM,
+        PiperVoice.DANNY: PiperQuality.LOW,
+        PiperVoice.HFC_FEMALE: PiperQuality.MEDIUM,
+        PiperVoice.HFC_MALE: PiperQuality.MEDIUM,
+        PiperVoice.JOE: PiperQuality.MEDIUM,
+        PiperVoice.JOHN: PiperQuality.MEDIUM,
+        PiperVoice.KATHLEEN: PiperQuality.LOW,
+        PiperVoice.KRISTIN: PiperQuality.MEDIUM,
+        PiperVoice.KUSAL: PiperQuality.MEDIUM,
+        PiperVoice.L2ARCTIC: PiperQuality.MEDIUM,
+        PiperVoice.LESSAC: PiperQuality.HIGH,
+        PiperVoice.LIBRITTS: PiperQuality.HIGH,
+        PiperVoice.LIBRITTS_R: PiperQuality.MEDIUM,
+        PiperVoice.LJSPEECH: PiperQuality.HIGH,
+        PiperVoice.NORMAN: PiperQuality.MEDIUM,
+        PiperVoice.RYAN: PiperQuality.HIGH,
+    }
+
     def __init__(
         self,
         voice: PiperVoice = PiperVoice.AMY,
-        quality: PiperQuality = PiperQuality.MEDIUM,
+        quality: PiperQuality = None,
     ):
         """
         Speaks the text using piper.
 
         Parameters
         ----------
-        voice : str, optional
+        voice : PiperVoice, optional
             Name of the piper voice to be used, can be one of 'PiperVoice'
             enum's attributes (default: PiperVoice.AMY).
-        quality : str, optional
-            Quality of the voice, can be ont of 'PiperQuality'
-            enum's attributes (default: PiperQuality.MEDIUM).
+        quality : PiperQuality, optional
+            Quality of the voice. If not provided, defaults to the highest
+            supported quality for the selected voice.
         """
         assert (
             voice in PiperVoice
         ), f"voice must be one of {', '.join(PiperVoice)}"
+        
+        # Determine the highest supported quality if none is provided
+        self.quality = quality or self.VOICE_QUALITY_MAP[voice]
         assert (
-            quality in PiperQuality
+            self.quality in PiperQuality
         ), f"quality must be one of {', '.join(PiperQuality)}"
+        
         install_piper()
         self.exe_path = str(
             APP_DIR
@@ -105,7 +130,7 @@ class PiperSpeaker(BaseSpeaker):
             / ("piper.exe" if PLATFORM == c.PLATFORM_WINDOWS else "piper")
         )
         self.onnx_f, self.conf_f = download_piper_model(
-            voice.value, quality.value
+            voice.value, self.quality.value
         )
         self.onnx_f, self.conf_f = str(self.onnx_f), str(self.conf_f)
         pygame.mixer.init()
@@ -133,3 +158,30 @@ class PiperSpeaker(BaseSpeaker):
         while pygame.mixer.get_busy():
             pygame.time.wait(100)
         os.remove(f)
+
+    def save(self, text: str, filename: str):
+        """
+        Saves the generated audio to a file.
+
+        Parameters
+        ----------
+        text : str
+            The text to convert to speech.
+        filename : str
+            The path of the file to save the audio.
+        """
+        subprocess.run(
+            [
+                self.exe_path,
+                "-m",
+                self.onnx_f,
+                "-c",
+                self.conf_f,
+                "-f",
+                filename,
+                "-q",
+            ],
+            input=text.encode("utf-8"),
+            check=True,
+            stdout=subprocess.DEVNULL,
+        )
