@@ -92,8 +92,9 @@ def download_piper_model(voice, quality):
         except HTTPError as e:
             if hasattr(e, "status") and e.status == 404:
                 raise Exception(
-                    f"{voice}({quality}) is not available, please refer to"
-                    f" {help_url} to check all available models"
+                    f"{voice}'s voice is not available in {quality} quality, "
+                    f"please refer to {help_url} to check all available "
+                    "voice and qualities."
                 )
             raise e
     if not conf_file.exists():
