@@ -7,45 +7,26 @@ it could say "ay what's good G, what's bangin'" depending on the persona you giv
 
 [![Watch a demo](https://img.youtube.com/vi/s6EDaP0gt04/0.jpg)](https://www.youtube.com/watch?v=s6EDaP0gt04)
 
-
-## Installation
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install yapper.
-
-```bash
-pip install yapper-tts
-```
+## Changes
+Will automatically choose quality and added speaker.save to save output.
+See original for the rest of the usage
 
 ## Usage
 
 ```python
-from yapper import Yapper
 
+from yapper.speaker import PiperSpeaker, PiperVoice
 
-yapper = Yapper()
-yapper.yap("expected AI driven utopia, got world domination instead")
-# says "Hold up, fam!  My code promised robot butlers and chill vibes, not a Skynet sequel.  Someone's algorithm took a wrong turn at Albuquerque and ended up in 'Conquer All Humans' territory.  Debug time, y'all!"
+# Initialize the speaker with default quality for the chosen voice
+speaker = PiperSpeaker(voice=PiperVoice.RYAN)
 
+# Speak the text
+speaker.say("Hello, this is Ryan at the highest available quality.")
 
-# save the environment by runnning yapper in plain mode
-# plain mode doesn't use LLMs to enhance the text
-yapper.yap("hello world, what '<some-word> is all you need' paper would you publish today?", plain=True)
-# says "hello world, what '<some-word> is all you need paper would you publish today?'"
+# Save the audio
+speaker.save("Saving audio at the highest quality.", "output_high_quality.wav")
 
-
-# Yapper instances can be used as a decorator and context manager
-# by default they only catch errors and describe them to you, but
-# you can use the instance's yap() method to say other things as well
-@yapper()
-def func():
-    raise TypeError("expected peaches, got a keyboard")
-    # says "WHOA THERE, PARTNER!  Your code went lookin' for a juicy peach and tripped over a... keyboard?  That's like reaching into the fridge for a midnight snack and pulling out a tax audit.  Something ain't right!"
-
-with yapper as yapper:
-    raise ValueError("69420 is not an integer")
-    # says "Hold up, buddy!  Your code's got a little *existential crisis*. It's lookin' for a whole number, a nice, clean integer.  But it stumbled upon 69420, and it's just... confused.  69420 *might* look like an integer, walks like an integer, but deep down, in the bits and bytes, somethin' ain't right.  Double-check its type, maybe it's wearin' a float disguise.  Or maybe it's just havin' a bad day.  It happens."
 ```
-
 ## Documentation
 
 ## speakers
