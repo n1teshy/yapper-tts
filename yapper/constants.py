@@ -13,6 +13,13 @@ SPEECH_VOLUME = 1
 FLD_ROLE = "role"
 FLD_CONTENT = "content"
 
+GEMINI_FLD_SYS_INST = "system_instruction"
+GEMINI_FLD_PARTS = "parts"
+GEMINI_FLD_TEXT = "text"
+GEMINI_FLD_CONTENT = "content"
+GEMINI_FLD_CONTENTS = "contents"
+GEMINI_FLD_CANDIDATES = "candidates"
+
 ROLE_SYSTEM = "system"
 ROLE_USER = "user"
 

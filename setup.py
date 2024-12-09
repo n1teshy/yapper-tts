@@ -20,7 +20,6 @@ setup(
     url=GITHUB,
     packages=find_packages(),
     install_requires=[
-        "google-generativeai==0.8.3",
         "pyttsx3",
         "g4f",
         "pygame",

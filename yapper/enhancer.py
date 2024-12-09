@@ -1,11 +1,9 @@
+import json
 from abc import ABC, abstractmethod
 from typing import Optional
-from urllib.error import URLError
+from urllib.request import Request, urlopen
 
-import google.generativeai as genai
 from g4f.client import Client
-from g4f.errors import RetryProviderError
-from google.api_core.exceptions import ResourceExhausted
 
 import yapper.constants as c
 from yapper.enums import Gemini, Persona
@@ -14,27 +12,41 @@ from yapper.enums import Gemini, Persona
 def enhancer_gpt(
     client: Client, model: str, persona_instr: str, query: str
 ) -> Optional[str]:
-    try:
-        messages = [
-            {c.FLD_ROLE: c.ROLE_SYSTEM, c.FLD_CONTENT: persona_instr},
-            {c.FLD_ROLE: c.ROLE_USER, c.FLD_CONTENT: f'\n\n"{query}"'},
-        ]
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-        )
-        return response.choices[0].message.content
-    except (RetryProviderError, URLError):
-        return None
+    messages = [
+        {c.FLD_ROLE: c.ROLE_SYSTEM, c.FLD_CONTENT: persona_instr},
+        {c.FLD_ROLE: c.ROLE_USER, c.FLD_CONTENT: query},
+    ]
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+    )
+    return response.choices[0].message.content
 
 
 def enhancer_gemini(
-    client: genai.GenerativeModel, query: str
-) -> Optional[str]:
-    try:
-        return client.generate_content(f'\n\n"{query}"').text
-    except ResourceExhausted:
-        return None
+    model: str, sys_inst: str, api_key: str, query: str
+) -> str:
+    base = "https://generativelanguage.googleapis.com/v1beta/models"
+    url = f"{base}/{model}:generateContent?key={api_key}"
+    headers = {
+        "Content-Type": "application/json",
+    }
+    data = {
+        c.GEMINI_FLD_SYS_INST: {
+            c.GEMINI_FLD_PARTS: {c.GEMINI_FLD_TEXT: sys_inst}
+        },
+        c.GEMINI_FLD_CONTENTS: {
+            c.GEMINI_FLD_PARTS: {c.GEMINI_FLD_TEXT: query}
+        },
+    }
+    request = Request(
+        url, headers=headers, data=json.dumps(data).encode("utf-8")
+    )
+    with urlopen(request) as response:
+        data = json.loads(response.read())
+        return data[c.GEMINI_FLD_CANDIDATES][0][c.GEMINI_FLD_CONTENT][
+            c.GEMINI_FLD_PARTS
+        ][0][c.GEMINI_FLD_TEXT]
 
 
 class BaseEnhancer(ABC):
@@ -134,11 +146,8 @@ class GeminiEnhancer(BaseEnhancer):
                 persona in Persona
             ), f"persona must be one of {', '.join(Persona)}"
             self.persona_instr = c.persona_instrs[persona]
-        genai.configure(api_key=api_key)
-        self.client = genai.GenerativeModel(
-            gemini_model.value,
-            system_instruction=self.persona_instr,
-        )
+        self.model = gemini_model
+        self.api_key = api_key
         self.default_enhancer = None
         self.fallback_to_gpt = fallback_to_default
         self.gpt_model = gpt_model
@@ -152,11 +161,17 @@ class GeminiEnhancer(BaseEnhancer):
         str
             Returns enhanced text, or original text if enhancement fails.
         """
-        enhanced = enhancer_gemini(self.client, text)
-        if enhanced is None and self.fallback_to_gpt:
-            if self.default_enhancer is None:
-                self.default_enhancer = DefaultEnhancer(
-                    persona_instr=self.persona_instr, gpt_model=self.gpt_model
-                )
-            enhanced = self.default_enhancer.enhance(text)
-        return enhanced or text
+        try:
+            return enhancer_gemini(
+                self.model.value, self.persona_instr, self.api_key, text
+            )
+        except Exception:
+            if self.fallback_to_gpt:
+                if self.default_enhancer is None:
+                    self.default_enhancer = DefaultEnhancer(
+                        persona_instr=self.persona_instr,
+                        gpt_model=self.gpt_model,
+                    )
+                return self.default_enhancer.enhance(text)
+            else:
+                raise
