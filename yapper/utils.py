@@ -33,23 +33,46 @@ APP_DIR = APP_DIR / meta.name
 APP_DIR.mkdir(exist_ok=True)
 
 
-def get_random_name(length=10):
+def get_random_name(length: int = 10) -> str:
+    """
+    Creates a 'length' letter random string.
+
+    Parameters
+    ----------
+    length : int, optional
+        Length of the random string (default: 10).
+    """
     return "".join(random.choices(string.ascii_letters, k=length))
 
 
-def progress_hook(block_idx, block_size, total_bytes):
+def progress_hook(block_idx: int, block_size: int, total_bytes: int):
+    """Shows download progress."""
     part = min(((block_idx + 1) * block_size) / total_bytes, 1)
     progress = "=" * int(60 * part)
     padding = " " * (60 - len(progress))
     print("\r|" + progress + padding + "|", end="")
 
 
-def download(url, file):
-    urlretrieve(url, file, reporthook=progress_hook)
+def download(url: str, file: str, show_progress: bool = True):
+    """
+    Downloads the content from the given URL into the given file.
+
+    Parameters
+    ----------
+    url : str
+        The URL to download content from.
+    file : str
+        The file to save the URL content into.
+    show_progress: bool, optional
+        Whether to show progress while downloading.
+    """
+    hook = progress_hook if show_progress else None
+    urlretrieve(url, file, reporthook=hook)
     print("")
 
 
 def install_piper():
+    """Installs piper into the app's home directory."""
     if (APP_DIR / "piper").exists():
         return
     zip_path = APP_DIR / "piper.zip"
@@ -73,7 +96,24 @@ def install_piper():
     os.remove(zip_path)
 
 
-def download_piper_model(voice, quality):
+def download_piper_model(voice: str, quality: str) -> tuple[str, str]:
+    """
+    Downloads the requiremnts (onnx file and config file) for the given
+    voice into the app's home directory.
+
+    Parameters
+    ----------
+    voice : str
+        The voice to download, can be any voice listen at
+        https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US.
+    quality : str
+        The quality of the given voice to download.
+
+    Returns
+    ----------
+        tuple[onnx_file, json_config_file]:
+        Returns paths to the onnx file and config file.
+    """
     voices_dir = APP_DIR / "piper_voices"
     voices_dir.mkdir(exist_ok=True)
     onnx_file = voices_dir / f"en_US-{voice}-{quality}.onnx"

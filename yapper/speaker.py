@@ -19,6 +19,16 @@ from yapper.utils import (
 
 
 def play_wave(pa_instance: pyaudio.PyAudio, wave_f: str):
+    """
+    Plays the given wave file using the given pyaudio.PyAudio instance.
+
+    Parameters
+    ----------
+    pa_instance : pyaudio.PyAudio
+        Gender of the voice, can be 'f' or 'm' (default: 'f').
+    wave_f : str
+        The wave file to play.
+    """
     with wave.open(wave_f, "rb") as wf:
         stream = pa_instance.open(
             format=pa_instance.get_format_from_width(wf.getsampwidth()),
@@ -50,6 +60,8 @@ class BaseSpeaker(ABC):
 
 
 class DefaultSpeaker(BaseSpeaker):
+    """Converts speech to text using pyttsx."""
+
     def __init__(
         self,
         voice: str = c.VOICE_FEMALE,
@@ -57,8 +69,6 @@ class DefaultSpeaker(BaseSpeaker):
         volume: str = c.SPEECH_VOLUME,
     ):
         """
-        Speaks the text using pyttsx.
-
         Parameters
         ----------
         voice : str, optional
@@ -90,6 +100,8 @@ class DefaultSpeaker(BaseSpeaker):
 
 
 class PiperSpeaker(BaseSpeaker):
+    """Converts text to speech using piper-tts"""
+
     VOICE_QUALITY_MAP = {
         PiperVoice.AMY: PiperQuality.MEDIUM,
         PiperVoice.ARCTIC: PiperQuality.MEDIUM,
@@ -117,8 +129,6 @@ class PiperSpeaker(BaseSpeaker):
         quality: Optional[PiperQuality] = None,
     ):
         """
-        Speaks the text using piper.
-
         Parameters
         ----------
         voice : PiperVoice, optional

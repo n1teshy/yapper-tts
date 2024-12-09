@@ -1,6 +1,6 @@
 from yapper.core import Yapper
 from yapper.enhancer import BaseEnhancer, DefaultEnhancer, GeminiEnhancer
-from yapper.enums import Gemini, Persona, PiperQuality, PiperVoice
+from yapper.enums import GeminiModel, Persona, PiperQuality, PiperVoice
 from yapper.speaker import BaseSpeaker, DefaultSpeaker, PiperSpeaker
 
 __all__ = [
@@ -14,5 +14,5 @@ __all__ = [
     "PiperVoice",
     "PiperQuality",
     "Persona",
-    "Gemini",
+    "GeminiModel",
 ]

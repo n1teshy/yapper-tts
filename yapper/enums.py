@@ -12,7 +12,7 @@ class Persona(str, Enum):
     TARS = "TARS"
 
 
-class Gemini(str, Enum):
+class GeminiModel(str, Enum):
     PRO_1_5_LATEST = "gemini-1.5-pro-latest"
     PRO_1_5_002 = "gemini-1.5-pro-002"
     PRO_1_5_EXP_0801 = "gemini-1.5-pro-exp-0801"
