@@ -53,7 +53,8 @@ a speaker is a `BaseSpeaker` subclass that implements a `say()` method, the meth
 there are two built-in speakers, `DefaultSpeaker` that uses [pyttsx3](https://github.com/nateshmbhat/pyttsx3) and
 `PiperSpeaker` that uses [piper](https://github.com/rhasspy/piper), I suggest using `PiperSpeaker` over the default
 because of how natural it sounds and it's also 'very' fast, might make piper the default speaker in future, and of course
-you can subclass `BaseSpeaker` to pass your own speaker to a Yapper instance. Piper offers many voices in `low, medium and high` qualities, you can use any of them by passing a value from `PiperVoice` enum as the voice argument to `PiperSpeker`.
+you can subclass `BaseSpeaker` to pass your own speaker to a Yapper instance. Piper offers many voices in `low, medium and high` qualities, you can use any of them by passing a value from `PiperVoice` enum as the voice argument to `PiperSpeker`
+the quality you want using `PiperQuality` value, by default the voice will be used in the highest available quality.
 
 ```python
 from yapper import Yapper, PiperSpeaker, PiperVoice, PiperQuality

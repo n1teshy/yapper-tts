@@ -22,7 +22,7 @@ setup(
     install_requires=[
         "pyttsx3",
         "g4f",
-        "pygame",
+        "pyaudio",
     ],
     classifiers=[
         "Intended Audience :: Developers",
