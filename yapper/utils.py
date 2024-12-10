@@ -1,4 +1,5 @@
 import os
+import platform
 import random
 import string
 import sys
@@ -78,15 +79,19 @@ def install_piper():
     zip_path = APP_DIR / "piper.zip"
     print("installing piper...")
     prefix = "https://github.com/rhasspy/piper/releases/download/2023.11.14-2"
-    nt_link = f"{prefix}/piper_windows_amd64.zip"
-    nix_link = f"{prefix}/piper_linux_x86_64.tar.gz"
-    mac_link = f"{prefix}/piper_macos_x64.tar.gz"
-    if PLATFORM == c.PLATFORM_WINDOWS:
-        download(nt_link, zip_path)
-    elif PLATFORM == c.PLATFORM_LINUX:
+    if PLATFORM == c.PLATFORM_LINUX:
+        if platform.machine() in ("aarch64", "arm64"):
+            nix_link = f"{prefix}/piper_linux_aarch64.tar.gz"
+        elif platform.machine() in ("armv7l", "armv7"):
+            nix_link = f"{prefix}/piper_linux_armv7l.tar.gz"
+        else:
+            nix_link = f"{prefix}/piper_linux_x86_64.tar.gz"
         download(nix_link, zip_path)
+    elif PLATFORM == c.PLATFORM_WINDOWS:
+        download(f"{prefix}/piper_windows_amd64.zip", zip_path)
     else:
-        download(mac_link, zip_path)
+        download(f"{prefix}/piper_macos_x64.tar.gz", zip_path)
+
     if PLATFORM == c.PLATFORM_WINDOWS:
         with zipfile.ZipFile(zip_path, "r") as z_f:
             z_f.extractall(APP_DIR)
@@ -125,10 +130,12 @@ def download_piper_model(voice: str, quality: str) -> tuple[str, str]:
     if not onnx_file.exists():
         try:
             print(f"downloading requirements for {voice}...")
+            temp = APP_DIR / f"{get_random_name()}.onnx"
             onnx_url = (
                 f"{prefix}/{voice}/{quality}/{onnx_file.name}?download=true"
             )
-            download(onnx_url, onnx_file)
+            download(onnx_url, temp)
+            onnx_file.write_bytes(temp.read_bytes())
         except HTTPError as e:
             if hasattr(e, "status") and e.status == 404:
                 raise Exception(
@@ -137,8 +144,19 @@ def download_piper_model(voice: str, quality: str) -> tuple[str, str]:
                     "voice and qualities."
                 )
             raise e
+        finally:
+            if temp.exists():
+                os.remove(temp)
     if not conf_file.exists():
         conf_url = f"{prefix}/{voice}/{quality}/{conf_file.name}?download=true"
-        download(conf_url, conf_file)
+        temp = APP_DIR / f"{get_random_name()}.json"
+        try:
+            download(conf_url, temp)
+            conf_file.write_text(
+                temp.read_text(encoding="utf-8"), encoding="utf-8"
+            )
+        finally:
+            if temp.exists():
+                os.remove(temp)
 
     return onnx_file, conf_file
