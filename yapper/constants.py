@@ -11,7 +11,12 @@ SPEECH_RATE = 165
 SPEECH_VOLUME = 1
 
 FLD_ROLE = "role"
+FLD_CHOICES = "choices"
+FLD_MESSAGE = "message"
 FLD_CONTENT = "content"
+
+GROQ_FLD_MESSAGES = "messages"
+GROQ_FLD_MODEL = "model"
 
 GEMINI_FLD_SYS_INST = "system_instruction"
 GEMINI_FLD_PARTS = "parts"

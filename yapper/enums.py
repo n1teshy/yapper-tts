@@ -55,3 +55,25 @@ class PiperQuality(str, Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
+
+
+class GroqModel(str, Enum):
+    LLAMA_3_8B_8192 = "llama3-8b-8192"
+    LLAMA_3_GROQ_70B_8192_TOOL_USE_PREVIEW = (
+        "llama3-groq-70b-8192-tool-use-preview"
+    )
+    LLAMA_3_GROQ_8B_8192_TOOL_USE_PREVIEW = (
+        "llama3-groq-8b-8192-tool-use-preview"
+    )
+    LLAMA_3_70B_8192 = "llama3-70b-8192"
+    LLAMA_3_1_8B_INSTANT = "llama-3.1-8b-instant"
+    LLAMA_3_2_1B_PREVIEW = "llama-3.2-1b-preview"
+    LLAMA_3_2_3B_PREVIEW = "llama-3.2-3b-preview"
+    LLAMA_3_2_11B_VISION_PREVIEW = "llama-3.2-11b-vision-preview"
+    LLAMA_3_2_90B_VISION_PREVIEW = "llama-3.2-90b-vision-preview"
+    LLAMA_3_3_70B_VERSATILE = "llama-3.3-70b-versatile"
+    LLAMA_3_3_70B_SPECDEC = "llama-3.3-70b-specdec"
+    LLAMA_GUARD_3_8B = "llama-guard-3-8b"
+    GEMMA_2_9B_IT = "gemma2-9b-it"
+    GEMMA_7B_IT = "gemma-7b-it"
+    MIXTRAL_8X7B_32768 = "mixtral-8x7b-32768"

@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 from g4f.client import Client
 
 import yapper.constants as c
-from yapper.enums import GeminiModel, Persona
+from yapper.enums import GeminiModel, GroqModel, Persona
 
 
 def enhancer_gpt(
@@ -73,6 +73,29 @@ def enhancer_gemini(
         return data[c.GEMINI_FLD_CANDIDATES][0][c.GEMINI_FLD_CONTENT][
             c.GEMINI_FLD_PARTS
         ][0][c.GEMINI_FLD_TEXT]
+
+
+def enhancer_groq(
+    model: str, api_key: str, persona_instr: str, text: str
+) -> str:
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+        "User-Agent": "curl/7.68.0",
+    }
+    data = {
+        c.GROQ_FLD_MESSAGES: [
+            {c.FLD_ROLE: c.ROLE_SYSTEM, c.FLD_CONTENT: persona_instr},
+            {c.FLD_ROLE: c.ROLE_USER, c.FLD_CONTENT: text},
+        ],
+        c.GROQ_FLD_MODEL: model,
+    }
+    with urlopen(
+        Request(url, headers=headers, data=json.dumps(data).encode("utf-8"))
+    ) as response:
+        data = json.loads(response.read())
+        return data[c.FLD_CHOICES][0][c.FLD_MESSAGE][c.FLD_CONTENT]
 
 
 class BaseEnhancer(ABC):
@@ -176,6 +199,72 @@ class GeminiEnhancer(BaseEnhancer):
         try:
             return enhancer_gemini(
                 self.model, self.persona_instr, self.api_key, text
+            )
+        except Exception:
+            if self.fallback_to_gpt:
+                if self.default_enhancer is None:
+                    self.default_enhancer = DefaultEnhancer(
+                        persona_instr=self.persona_instr,
+                        gpt_model=self.gpt_model,
+                    )
+                return self.default_enhancer.enhance(text)
+            else:
+                raise
+
+
+class GroqEnhancer(BaseEnhancer):
+    """
+    Enhances text using a Groq API
+    (https://console.groq.com/docs/overview).
+    """
+
+    def __init__(
+        self,
+        api_key: str,
+        groq_model: GroqModel = GroqModel.LLAMA_3_8B_8192,
+        persona: Persona = Persona.DEFAULT,
+        persona_instr: Optional[str] = None,
+        fallback_to_default: bool = False,
+        gpt_model: str = c.GPT_MODEL_DEFAULT,
+    ):
+        """
+        Parameters
+        ----------
+        api_key : str
+            Your Groq api key.
+        groq_model : GroqModel, optional
+            the model to use for enhancement, must be one of 'GroqModel'
+            enum's attributes (default: GroqModel.LLAMA_3_8B_8192).
+        persona : Persona, optional
+            The persona to be used for enhancement (default: Persona.DEFAULT).
+        persona_instr : Optional[str]
+            Custom persona instruction, can be used to give the LLM a custom
+            persona (default: None).
+        fallback_to_default: bool, optional
+            Whether DefaultEnhancer be used in case GeminiEnhancer fails.
+            (default: False)
+        gpt_model : str, optional
+            The GPT model to be used for enhancement if fallback_to_default
+            is 'True'. (default: gpt-3.5-turbo).
+        """
+        if persona_instr is not None:
+            self.persona_instr = persona_instr
+        else:
+            assert (
+                persona in Persona
+            ), f"persona must be one of {', '.join(Persona)}"
+            self.persona_instr = c.persona_instrs[persona]
+        self.model = groq_model
+        self.api_key = api_key
+        self.default_enhancer = None
+        self.fallback_to_gpt = fallback_to_default
+        self.gpt_model = gpt_model
+
+    def enhance(self, text: str) -> str:
+        """Returns text enhanced by Groq API."""
+        try:
+            return enhancer_groq(
+                self.model.value, self.api_key, self.persona_instr, text
             )
         except Exception:
             if self.fallback_to_gpt:
