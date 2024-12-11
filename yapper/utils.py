@@ -6,11 +6,11 @@ import sys
 import tarfile
 import zipfile
 from pathlib import Path
-from urllib.error import HTTPError
 from urllib.request import urlretrieve
 
 import yapper.constants as c
 import yapper.meta as meta
+from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
 
 PLATFORM = None
 APP_DIR = None
@@ -101,62 +101,57 @@ def install_piper():
     os.remove(zip_path)
 
 
-def download_piper_model(voice: str, quality: str) -> tuple[str, str]:
+def download_piper_model(
+    voice: PiperVoiceUS | PiperVoiceUK, quality: PiperQuality
+) -> tuple[str, str]:
     """
-    Downloads the requiremnts (onnx file and config file) for the given
-    voice into the app's home directory.
+    Downloads the given piper voice with the given quality.
 
     Parameters
     ----------
-    voice : str
-        The voice to download, can be any voice listen at
-        https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US.
-    quality : str
-        The quality of the given voice to download.
+    voice : PiperVoiceUS or PiperVoiceUK
+        The Piper voice model to download.
+    quality : PiperQuality
+        The quality of the given voice.
 
     Returns
     ----------
-        tuple[onnx_file, json_config_file]:
-        Returns paths to the onnx file and config file.
+    tuple of str
+        The voice model file and the voice configuration file in a tuple.
     """
     voices_dir = APP_DIR / "piper_voices"
     voices_dir.mkdir(exist_ok=True)
-    onnx_file = voices_dir / f"en_US-{voice}-{quality}.onnx"
-    conf_file = voices_dir / f"en_US-{voice}-{quality}.onnx.json"
-    prefix = (
-        "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US"
-    )
-    help_url = "https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US"
+    lang_code = "en_US" if isinstance(voice, PiperVoiceUS) else "en_GB"
+    voice, quality = voice.value, quality.value
+
+    onnx_file = voices_dir / f"{lang_code}-{voice}-{quality}.onnx"
+    conf_file = voices_dir / f"{lang_code}-{voice}-{quality}.onnx.json"
+
+    prefix = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/"
+    prefix += lang_code
+    help_url = "https://huggingface.co/rhasspy/piper-voices/tree/main/en/"
+    help_url += lang_code
     if not onnx_file.exists():
         try:
             print(f"downloading requirements for {voice}...")
-            temp = APP_DIR / f"{get_random_name()}.onnx"
             onnx_url = (
                 f"{prefix}/{voice}/{quality}/{onnx_file.name}?download=true"
             )
-            download(onnx_url, temp)
-            onnx_file.write_bytes(temp.read_bytes())
-        except HTTPError as e:
-            if hasattr(e, "status") and e.status == 404:
+            download(onnx_url, onnx_file)
+        except (KeyboardInterrupt, Exception) as e:
+            onnx_file.unlink(missing_ok=True)
+            if getattr(e, "status", None) == 404:
                 raise Exception(
-                    f"{voice}'s voice is not available in {quality} quality, "
-                    f"please refer to {help_url} to check all available "
-                    "voice and qualities."
+                    f"{voice}({quality}) is not available, please refer to"
+                    f" {help_url} to check all available models"
                 )
             raise e
-        finally:
-            if temp.exists():
-                os.remove(temp)
     if not conf_file.exists():
         conf_url = f"{prefix}/{voice}/{quality}/{conf_file.name}?download=true"
-        temp = APP_DIR / f"{get_random_name()}.json"
         try:
-            download(conf_url, temp)
-            conf_file.write_text(
-                temp.read_text(encoding="utf-8"), encoding="utf-8"
-            )
-        finally:
-            if temp.exists():
-                os.remove(temp)
+            download(conf_url, conf_file)
+        except (KeyboardInterrupt, Exception) as e:
+            conf_file.unlink(missing_ok=True)
+            raise e
 
-    return onnx_file, conf_file
+    return str(onnx_file), str(conf_file)

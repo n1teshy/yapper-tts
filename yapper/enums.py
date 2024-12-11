@@ -30,7 +30,7 @@ class GeminiModel(str, Enum):
     FLASH_1_5_8B_EXP_0924 = "gemini-1.5-flash-8b-exp-0924"
 
 
-class PiperVoice(str, Enum):
+class PiperVoiceUS(str, Enum):
     AMY = "amy"
     ARCTIC = "arctic"
     BRYCE = "bryce"
@@ -49,6 +49,18 @@ class PiperVoice(str, Enum):
     LIBRITTS = "libritts"
     LIBRITTS_R = "libritts_r"
     RYAN = "ryan"
+
+
+class PiperVoiceUK(str, Enum):
+    ALAN = "alan"
+    ALBA = "alba"
+    ARU = "aru"
+    CORI = "cori"
+    JENNY_DIOCO = "jenny_dioco"
+    NORTHERN_ENGLISH_MALE = "northern_english_male"
+    SEMAINE = "semaine"
+    SOUTHERN_ENGLISH_FEMALE = "southern_english_female"
+    VCTK = "vctk"
 
 
 class PiperQuality(str, Enum):

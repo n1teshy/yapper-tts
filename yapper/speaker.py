@@ -8,14 +8,9 @@ import pyaudio
 import pyttsx3 as tts
 
 import yapper.constants as c
-from yapper.enums import PiperQuality, PiperVoice
-from yapper.utils import (
-    APP_DIR,
-    PLATFORM,
-    download_piper_model,
-    get_random_name,
-    install_piper
-)
+from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
+from yapper.utils import (APP_DIR, PLATFORM, download_piper_model,
+                          get_random_name, install_piper)
 
 
 def play_wave(pa_instance: pyaudio.PyAudio, wave_f: str):
@@ -103,58 +98,65 @@ class PiperSpeaker(BaseSpeaker):
     """Converts text to speech using piper-tts"""
 
     VOICE_QUALITY_MAP = {
-        PiperVoice.AMY: PiperQuality.MEDIUM,
-        PiperVoice.ARCTIC: PiperQuality.MEDIUM,
-        PiperVoice.BRYCE: PiperQuality.MEDIUM,
-        PiperVoice.DANNY: PiperQuality.LOW,
-        PiperVoice.HFC_FEMALE: PiperQuality.MEDIUM,
-        PiperVoice.HFC_MALE: PiperQuality.MEDIUM,
-        PiperVoice.JOE: PiperQuality.MEDIUM,
-        PiperVoice.JOHN: PiperQuality.MEDIUM,
-        PiperVoice.KATHLEEN: PiperQuality.LOW,
-        PiperVoice.KRISTIN: PiperQuality.MEDIUM,
-        PiperVoice.KUSAL: PiperQuality.MEDIUM,
-        PiperVoice.L2ARCTIC: PiperQuality.MEDIUM,
-        PiperVoice.LESSAC: PiperQuality.HIGH,
-        PiperVoice.LIBRITTS: PiperQuality.HIGH,
-        PiperVoice.LIBRITTS_R: PiperQuality.MEDIUM,
-        PiperVoice.LJSPEECH: PiperQuality.HIGH,
-        PiperVoice.NORMAN: PiperQuality.MEDIUM,
-        PiperVoice.RYAN: PiperQuality.HIGH,
+        PiperVoiceUS.AMY: PiperQuality.MEDIUM,
+        PiperVoiceUS.ARCTIC: PiperQuality.MEDIUM,
+        PiperVoiceUS.BRYCE: PiperQuality.MEDIUM,
+        PiperVoiceUS.DANNY: PiperQuality.LOW,
+        PiperVoiceUS.HFC_FEMALE: PiperQuality.MEDIUM,
+        PiperVoiceUS.HFC_MALE: PiperQuality.MEDIUM,
+        PiperVoiceUS.JOE: PiperQuality.MEDIUM,
+        PiperVoiceUS.JOHN: PiperQuality.MEDIUM,
+        PiperVoiceUS.KATHLEEN: PiperQuality.LOW,
+        PiperVoiceUS.KRISTIN: PiperQuality.MEDIUM,
+        PiperVoiceUS.KUSAL: PiperQuality.MEDIUM,
+        PiperVoiceUS.L2ARCTIC: PiperQuality.MEDIUM,
+        PiperVoiceUS.LESSAC: PiperQuality.HIGH,
+        PiperVoiceUS.LIBRITTS: PiperQuality.HIGH,
+        PiperVoiceUS.LIBRITTS_R: PiperQuality.MEDIUM,
+        PiperVoiceUS.LJSPEECH: PiperQuality.HIGH,
+        PiperVoiceUS.NORMAN: PiperQuality.MEDIUM,
+        PiperVoiceUS.RYAN: PiperQuality.HIGH,
+        PiperVoiceUK.ALAN: PiperQuality.MEDIUM,
+        PiperVoiceUK.ALBA: PiperQuality.MEDIUM,
+        PiperVoiceUK.ARU: PiperQuality.MEDIUM,
+        PiperVoiceUK.CORI: PiperQuality.HIGH,
+        PiperVoiceUK.JENNY_DIOCO: PiperQuality.MEDIUM,
+        PiperVoiceUK.NORTHERN_ENGLISH_MALE: PiperQuality.MEDIUM,
+        PiperVoiceUK.SEMAINE: PiperQuality.MEDIUM,
+        PiperVoiceUK.SOUTHERN_ENGLISH_FEMALE: PiperQuality.LOW,
+        PiperVoiceUK.VCTK: PiperQuality.MEDIUM,
     }
 
     def __init__(
         self,
-        voice: PiperVoice = PiperVoice.AMY,
+        voice: PiperVoiceUS | PiperVoiceUK = PiperVoiceUS.HFC_FEMALE,
         quality: Optional[PiperQuality] = None,
     ):
         """
         Parameters
         ----------
-        voice : PiperVoice, optional
-            Name of the piper voice to be used, can be one of 'PiperVoice'
-            enum's attributes (default: PiperVoice.AMY).
+        voice : PiperVoiceUS, optional
+            Name of the piper voice to be used, can be one of 'PiperVoiceUS'
+            enum's attributes (default: PiperVoiceUS.AMY).
         quality : PiperQuality, optional
             Quality of the voice, can be ont of 'PiperQuality'
             enum's attributes (default: the highest available quality of
             the given voice).
         """
-        assert (
-            voice in PiperVoice
-        ), f"voice must be one of {', '.join(PiperVoice)}"
+        assert isinstance(
+            voice, (PiperVoiceUS, PiperVoiceUK)
+        ), "voice must be a member of PiperVoiceUS or PiperVoiceUK"
         quality = quality or PiperSpeaker.VOICE_QUALITY_MAP[voice]
         assert (
             quality in PiperQuality
-        ), f"quality must be one of {', '.join(PiperQuality)}"
+        ), "quality must a member of PiperQuality"
         install_piper()
         self.exe_path = str(
             APP_DIR
             / "piper"
             / ("piper.exe" if PLATFORM == c.PLATFORM_WINDOWS else "piper")
         )
-        self.onnx_f, self.conf_f = download_piper_model(
-            voice.value, quality.value
-        )
+        self.onnx_f, self.conf_f = download_piper_model(voice, quality)
         self.onnx_f, self.conf_f = str(self.onnx_f), str(self.conf_f)
         self.pa_instance = pyaudio.PyAudio()
 

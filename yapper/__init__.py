@@ -3,14 +3,15 @@ from yapper.enhancer import (
     BaseEnhancer,
     DefaultEnhancer,
     GeminiEnhancer,
-    GroqEnhancer
+    GroqEnhancer,
 )
 from yapper.enums import (
     GeminiModel,
     GroqModel,
     Persona,
     PiperQuality,
-    PiperVoice
+    PiperVoiceUK,
+    PiperVoiceUS,
 )
 from yapper.speaker import BaseSpeaker, DefaultSpeaker, PiperSpeaker
 
@@ -23,7 +24,8 @@ __all__ = [
     "BaseSpeaker",
     "DefaultSpeaker",
     "PiperSpeaker",
-    "PiperVoice",
+    "PiperVoiceUS",
+    "PiperVoiceUK",
     "PiperQuality",
     "Persona",
     "GeminiModel",
