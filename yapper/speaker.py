@@ -1,42 +1,39 @@
 import os
 import subprocess
-import wave
+import time
 from abc import ABC, abstractmethod
 from typing import Optional
 
-import pyaudio
 import pyttsx3 as tts
 
 import yapper.constants as c
 from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
-from yapper.utils import (APP_DIR, PLATFORM, download_piper_model,
-                          get_random_name, install_piper)
+from yapper.utils import (
+    APP_DIR,
+    PLATFORM,
+    download_piper_model,
+    get_random_name,
+    install_piper
+)
+
+# suppresses pygame's welcome message
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+import pygame  # noqa: E402
 
 
-def play_wave(pa_instance: pyaudio.PyAudio, wave_f: str):
+def play_wave(wave_f: str):
     """
-    Plays the given wave file using the given pyaudio.PyAudio instance.
+    Plays the given wave file using pygame.
 
     Parameters
     ----------
-    pa_instance : pyaudio.PyAudio
-        Gender of the voice, can be 'f' or 'm' (default: 'f').
     wave_f : str
         The wave file to play.
     """
-    with wave.open(wave_f, "rb") as wf:
-        stream = pa_instance.open(
-            format=pa_instance.get_format_from_width(wf.getsampwidth()),
-            channels=wf.getnchannels(),
-            rate=wf.getframerate(),
-            output=True,
-        )
-        data = wf.readframes(1024)
-        while data:
-            stream.write(data)
-            data = wf.readframes(1024)
-        stream.stop_stream()
-        stream.close()
+    sound = pygame.mixer.Sound(wave_f)
+    sound.play()
+    while pygame.mixer.get_busy():
+        pygame.time.wait(100)
 
 
 class BaseSpeaker(ABC):
@@ -158,7 +155,7 @@ class PiperSpeaker(BaseSpeaker):
         )
         self.onnx_f, self.conf_f = download_piper_model(voice, quality)
         self.onnx_f, self.conf_f = str(self.onnx_f), str(self.conf_f)
-        self.pa_instance = pyaudio.PyAudio()
+        pygame.mixer.init()
 
     def text_to_wave(self, text: str, file: str):
         """Saves the speech for the given text into the given file."""
@@ -183,7 +180,7 @@ class PiperSpeaker(BaseSpeaker):
         f = APP_DIR / f"{get_random_name()}.wav"
         try:
             self.text_to_wave(text, str(f))
-            play_wave(self.pa_instance, str(f))
+            play_wave(str(f))
         finally:
             if f.exists():
                 os.remove(f)
