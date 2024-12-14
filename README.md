@@ -53,15 +53,15 @@ a speaker is a `BaseSpeaker` subclass that implements a `say()` method, the meth
 there are two built-in speakers, `DefaultSpeaker` that uses [pyttsx3](https://github.com/nateshmbhat/pyttsx3) and
 `PiperSpeaker` that uses [piper](https://github.com/rhasspy/piper), I suggest using `PiperSpeaker` over the default
 because of how natural it sounds and it's also 'very' fast, might make piper the default speaker in future, and of course
-you can subclass `BaseSpeaker` to pass your own speaker to a Yapper instance. Piper offers many voices in `low, medium and high` qualities, you can use any of them by passing a value from `PiperVoice` enum as the voice argument to `PiperSpeker`
-the quality you want using `PiperQuality` value, by default the voice will be used in the highest available quality.
+you can subclass `BaseSpeaker` to pass your own speaker to a Yapper instance. Piper offers many voices in `low, medium and high` qualities, you can use any of them by passing a value from `PiperVoiceUS` or `PiperVoiceUK` enum as the voice argument to `PiperSpeaker`
+the quality you want using `PiperQuality` value, by default the voice will be used in the highest available quality. You can also pass
+your own speaker by subclassing `BaseSpeaker`.
 
 ```python
-from yapper import Yapper, PiperSpeaker, PiperVoice, PiperQuality
+from yapper import Yapper, PiperSpeaker, PiperVoiceUK, PiperQuality
 
 lessac = PiperSpeaker(
-    voice=PiperVoice.LESSAC,
-    quality=PiperQuality.HIGH
+    voice=PiperVoiceUK.ALAN
 )
 lessac.say("hello")
 
@@ -71,10 +71,11 @@ yapper.yap("<some random text>")
 
 ## enhancers
 an enhancer is `BaseEnhancer` subclass that implements an `enhance()` method, the method takes a string and adds
-the given `persona`'s vibe to it, there are two built-in enhancers `DefaultEnhancer` and `GeminiEnhancer`, `DefaultEnhancer`
-uses the [g4f](https://github.com/xtekky/gpt4free) to transform text and `GeminiEnhancer` uses Google's gemini api to do the same, you can create a free GCP account and get a gemini api-key for free to use `GeminiEnhancer`, you can pass your own enhancer by subclassing `BaseEnhancer`.
+the given `persona`'s vibe to it, there are three built-in enhancers `DefaultEnhancer`, `GeminiEnhancer` and `GroqEnhancer`,`DefaultEnhancer` uses the [g4f](https://github.com/xtekky/gpt4free) to transform text, `GeminiEnhancer` uses Google's gemini
+api and `GroqEnhancer` uses [groq](https://groq.com/)'s free APIs', you can create a free GCP account or Groq account and get a
+free api-key to use `GeminiEnhancer` and `GroqEnhancer` respectively, you can pass your own enhancer by subclassing `BaseEnhancer`.
 
-NOTE: `BaseEnhancer` may or may not work, use `GeminiEnhancer` for stability.
+NOTE: `BaseEnhancer` may or may not work, use `GeminiEnhancer` or `GroqEnhancer` for stability.
 NOTE: if an enhancer doesn't work, yapper will say the text as it is.
 ```python
 from yapper import Yapper, GeminiEnhancer
