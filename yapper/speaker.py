@@ -1,6 +1,5 @@
 import os
 import subprocess
-import time
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -128,6 +127,7 @@ class PiperSpeaker(BaseSpeaker):
         self,
         voice: PiperVoiceUS | PiperVoiceUK = PiperVoiceUS.HFC_FEMALE,
         quality: Optional[PiperQuality] = None,
+        show_progress: bool = True,
     ):
         """
         Parameters
@@ -139,21 +139,23 @@ class PiperSpeaker(BaseSpeaker):
             Quality of the voice, can be ont of 'PiperQuality'
             enum's attributes (default: the highest available quality of
             the given voice).
+        show_progress : bool
+            Show progress when the voice model is being downloaded (default: True).
         """
         assert isinstance(
             voice, (PiperVoiceUS, PiperVoiceUK)
         ), "voice must be a member of PiperVoiceUS or PiperVoiceUK"
         quality = quality or PiperSpeaker.VOICE_QUALITY_MAP[voice]
-        assert (
-            quality in PiperQuality
-        ), "quality must a member of PiperQuality"
-        install_piper()
+        assert quality in PiperQuality, "quality must a member of PiperQuality"
+        install_piper(show_progress)
         self.exe_path = str(
             APP_DIR
             / "piper"
             / ("piper.exe" if PLATFORM == c.PLATFORM_WINDOWS else "piper")
         )
-        self.onnx_f, self.conf_f = download_piper_model(voice, quality)
+        self.onnx_f, self.conf_f = download_piper_model(
+            voice, quality, show_progress
+        )
         self.onnx_f, self.conf_f = str(self.onnx_f), str(self.conf_f)
         pygame.mixer.init()
 

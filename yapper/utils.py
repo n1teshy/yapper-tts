@@ -54,7 +54,7 @@ def progress_hook(block_idx: int, block_size: int, total_bytes: int):
     print("\r|" + progress + padding + "|", end="")
 
 
-def download(url: str, file: str, show_progress: bool = True):
+def download(url: str, file: str, show_progress: bool):
     """
     Downloads the content from the given URL into the given file.
 
@@ -69,15 +69,17 @@ def download(url: str, file: str, show_progress: bool = True):
     """
     hook = progress_hook if show_progress else None
     urlretrieve(url, file, reporthook=hook)
-    print("")
+    if show_progress:
+        print("")
 
 
-def install_piper():
+def install_piper(show_progress: bool):
     """Installs piper into the app's home directory."""
     if (APP_DIR / "piper").exists():
         return
     zip_path = APP_DIR / "piper.zip"
-    print("installing piper...")
+    if show_progress:
+        print("installing piper...")
     prefix = "https://github.com/rhasspy/piper/releases/download/2023.11.14-2"
     if PLATFORM == c.PLATFORM_LINUX:
         if platform.machine() in ("aarch64", "arm64"):
@@ -86,11 +88,11 @@ def install_piper():
             nix_link = f"{prefix}/piper_linux_armv7l.tar.gz"
         else:
             nix_link = f"{prefix}/piper_linux_x86_64.tar.gz"
-        download(nix_link, zip_path)
+        download(nix_link, zip_path, show_progress)
     elif PLATFORM == c.PLATFORM_WINDOWS:
-        download(f"{prefix}/piper_windows_amd64.zip", zip_path)
+        download(f"{prefix}/piper_windows_amd64.zip", zip_path, show_progress)
     else:
-        download(f"{prefix}/piper_macos_x64.tar.gz", zip_path)
+        download(f"{prefix}/piper_macos_x64.tar.gz", zip_path, show_progress)
 
     if PLATFORM == c.PLATFORM_WINDOWS:
         with zipfile.ZipFile(zip_path, "r") as z_f:
@@ -102,7 +104,9 @@ def install_piper():
 
 
 def download_piper_model(
-    voice: PiperVoiceUS | PiperVoiceUK, quality: PiperQuality
+    voice: PiperVoiceUS | PiperVoiceUK,
+    quality: PiperQuality,
+    show_progress: bool,
 ) -> tuple[str, str]:
     """
     Downloads the given piper voice with the given quality.
@@ -133,11 +137,12 @@ def download_piper_model(
     help_url += lang_code
     if not onnx_file.exists():
         try:
-            print(f"downloading requirements for {voice}...")
+            if show_progress:
+                print(f"downloading requirements for {voice}...")
             onnx_url = (
                 f"{prefix}/{voice}/{quality}/{onnx_file.name}?download=true"
             )
-            download(onnx_url, onnx_file)
+            download(onnx_url, onnx_file, show_progress)
         except (KeyboardInterrupt, Exception) as e:
             onnx_file.unlink(missing_ok=True)
             if getattr(e, "status", None) == 404:
@@ -149,7 +154,7 @@ def download_piper_model(
     if not conf_file.exists():
         conf_url = f"{prefix}/{voice}/{quality}/{conf_file.name}?download=true"
         try:
-            download(conf_url, conf_file)
+            download(conf_url, conf_file, show_progress)
         except (KeyboardInterrupt, Exception) as e:
             conf_file.unlink(missing_ok=True)
             raise e
