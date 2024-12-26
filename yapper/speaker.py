@@ -1,6 +1,5 @@
 import os
 import subprocess
-import time
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -8,13 +7,8 @@ import pyttsx3 as tts
 
 import yapper.constants as c
 from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
-from yapper.utils import (
-    APP_DIR,
-    PLATFORM,
-    download_piper_model,
-    get_random_name,
-    install_piper
-)
+from yapper.utils import (APP_DIR, PLATFORM, download_piper_model,
+                          get_random_name, install_piper)
 
 # suppresses pygame's welcome message
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
@@ -128,6 +122,7 @@ class PiperSpeaker(BaseSpeaker):
         self,
         voice: PiperVoiceUS | PiperVoiceUK = PiperVoiceUS.HFC_FEMALE,
         quality: Optional[PiperQuality] = None,
+        show_progress: bool = True,
     ):
         """
         Parameters
@@ -144,16 +139,16 @@ class PiperSpeaker(BaseSpeaker):
             voice, (PiperVoiceUS, PiperVoiceUK)
         ), "voice must be a member of PiperVoiceUS or PiperVoiceUK"
         quality = quality or PiperSpeaker.VOICE_QUALITY_MAP[voice]
-        assert (
-            quality in PiperQuality
-        ), "quality must a member of PiperQuality"
-        install_piper()
+        assert quality in PiperQuality, "quality must a member of PiperQuality"
+        install_piper(show_progress)
         self.exe_path = str(
             APP_DIR
             / "piper"
             / ("piper.exe" if PLATFORM == c.PLATFORM_WINDOWS else "piper")
         )
-        self.onnx_f, self.conf_f = download_piper_model(voice, quality)
+        self.onnx_f, self.conf_f = download_piper_model(
+            voice, quality, show_progress
+        )
         self.onnx_f, self.conf_f = str(self.onnx_f), str(self.conf_f)
         pygame.mixer.init()
 
