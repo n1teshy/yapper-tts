@@ -134,6 +134,8 @@ class PiperSpeaker(BaseSpeaker):
             Quality of the voice, can be ont of 'PiperQuality'
             enum's attributes (default: the highest available quality of
             the given voice).
+        show_progress : bool
+            Show progress when the voice model is being downloaded (default: True).
         """
         assert isinstance(
             voice, (PiperVoiceUS, PiperVoiceUK)

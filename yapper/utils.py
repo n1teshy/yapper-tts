@@ -69,7 +69,8 @@ def download(url: str, file: str, show_progress: bool):
     """
     hook = progress_hook if show_progress else None
     urlretrieve(url, file, reporthook=hook)
-    print("")
+    if show_progress:
+        print("")
 
 
 def install_piper(show_progress: bool):
@@ -77,7 +78,8 @@ def install_piper(show_progress: bool):
     if (APP_DIR / "piper").exists():
         return
     zip_path = APP_DIR / "piper.zip"
-    print("installing piper...")
+    if show_progress:
+        print("installing piper...")
     prefix = "https://github.com/rhasspy/piper/releases/download/2023.11.14-2"
     if PLATFORM == c.PLATFORM_LINUX:
         if platform.machine() in ("aarch64", "arm64"):
@@ -135,7 +137,8 @@ def download_piper_model(
     help_url += lang_code
     if not onnx_file.exists():
         try:
-            print(f"downloading requirements for {voice}...")
+            if show_progress:
+                print(f"downloading requirements for {voice}...")
             onnx_url = (
                 f"{prefix}/{voice}/{quality}/{onnx_file.name}?download=true"
             )
