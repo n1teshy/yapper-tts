@@ -21,7 +21,6 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pyttsx3",
-        "g4f",
         "pygame",
     ],
     classifiers=[

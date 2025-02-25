@@ -4,8 +4,8 @@ from types import TracebackType
 from typing import Callable, Optional
 
 import yapper.meta as meta
-from yapper.enhancer import BaseEnhancer, DefaultEnhancer
-from yapper.speaker import BaseSpeaker, DefaultSpeaker
+from yapper.enhancer import BaseEnhancer, NoEnhancer
+from yapper.speaker import BaseSpeaker, PiperSpeaker
 
 
 class Yapper:
@@ -33,8 +33,8 @@ class Yapper:
         use_stdout: bool, optional
             print the enhanced text before saying it (default: False).
         """
-        self.enhancer = enhancer or DefaultEnhancer()
-        self.speaker = speaker or DefaultSpeaker()
+        self.enhancer = enhancer or NoEnhancer()
+        self.speaker = speaker or PiperSpeaker()
         self.plain = plain
         self.block = block
         self.use_stdout = use_stdout

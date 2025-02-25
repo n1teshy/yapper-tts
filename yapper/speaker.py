@@ -7,8 +7,13 @@ import pyttsx3 as tts
 
 import yapper.constants as c
 from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
-from yapper.utils import (APP_DIR, PLATFORM, download_piper_model,
-                          get_random_name, install_piper)
+from yapper.utils import (
+    APP_DIR,
+    PLATFORM,
+    download_piper_model,
+    get_random_name,
+    install_piper,
+)
 
 # suppresses pygame's welcome message
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
@@ -45,7 +50,7 @@ class BaseSpeaker(ABC):
         pass
 
 
-class DefaultSpeaker(BaseSpeaker):
+class PyTTSXSpeaker(BaseSpeaker):
     """Converts speech to text using pyttsx."""
 
     def __init__(
@@ -135,7 +140,8 @@ class PiperSpeaker(BaseSpeaker):
             enum's attributes (default: the highest available quality of
             the given voice).
         show_progress : bool
-            Show progress when the voice model is being downloaded (default: True).
+            Show progress when the voice model is being downloaded
+            (default: True).
         """
         assert isinstance(
             voice, (PiperVoiceUS, PiperVoiceUK)

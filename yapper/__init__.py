@@ -1,9 +1,9 @@
 from yapper.core import Yapper
 from yapper.enhancer import (
     BaseEnhancer,
-    DefaultEnhancer,
     GeminiEnhancer,
     GroqEnhancer,
+    NoEnhancer,
 )
 from yapper.enums import (
     GeminiModel,
@@ -13,16 +13,16 @@ from yapper.enums import (
     PiperVoiceUK,
     PiperVoiceUS,
 )
-from yapper.speaker import BaseSpeaker, DefaultSpeaker, PiperSpeaker
+from yapper.speaker import BaseSpeaker, PiperSpeaker, PyTTSXSpeaker
 
 __all__ = [
     "Yapper",
     "BaseEnhancer",
-    "DefaultEnhancer",
+    "NoEnhancer",
     "GeminiEnhancer",
     "GroqEnhancer",
     "BaseSpeaker",
-    "DefaultSpeaker",
+    "PyTTSXSpeaker",
     "PiperSpeaker",
     "PiperVoiceUS",
     "PiperVoiceUK",

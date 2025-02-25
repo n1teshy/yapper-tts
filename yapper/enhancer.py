@@ -3,38 +3,8 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from urllib.request import Request, urlopen
 
-from g4f.client import Client
-
 import yapper.constants as c
 from yapper.enums import GeminiModel, GroqModel, Persona
-
-
-def enhancer_gpt(
-    client: Client, model: str, persona_instr: str, text: str
-) -> Optional[str]:
-    """
-    Enhances the given text using g4f (gpt for free).
-
-    Parameters
-    ----------
-    client : g4f.client.Client
-        The g4f client used for the API request.
-    model : str
-        The GPT model to use for enhancing text.
-    persona_instr : the persona instruction to use for text enhancement,
-        can be any system message.
-    text: str
-        The text to enhance.
-    """
-    messages = [
-        {c.FLD_ROLE: c.ROLE_SYSTEM, c.FLD_CONTENT: persona_instr},
-        {c.FLD_ROLE: c.ROLE_USER, c.FLD_CONTENT: text},
-    ]
-    response = client.chat.completions.create(
-        model=model,
-        messages=messages,
-    )
-    return response.choices[0].message.content
 
 
 def enhancer_gemini(
@@ -113,39 +83,11 @@ class BaseEnhancer(ABC):
         pass
 
 
-class DefaultEnhancer(BaseEnhancer):
-    """Enhances text using g4f (gpt for free)."""
+class NoEnhancer(BaseEnhancer):
+    """Doesn't do anything to the text, a placeholder for a real enhancer."""
 
-    def __init__(
-        self,
-        persona: Persona = Persona.DEFAULT,
-        persona_instr: Optional[str] = None,
-        gpt_model: str = c.GPT_MODEL_DEFAULT,
-    ):
-        """
-        Parameters
-        ----------
-        persona : Persona, optional
-            The persona to be used for enhancement (default: Persona.DEFAULT).
-        persona_instr : Optional[str]
-            Custom persona instruction, can be used to give the LLM a custom
-            persona (default: None).
-        gpt_model : str, optional
-            The GPT model to be used for enhancement (default: gpt-3.5-turbo).
-        """
-        if persona_instr is not None:
-            self.persona_instr = persona_instr
-        else:
-            assert (
-                persona in Persona
-            ), f"persona must be one of {', '.join(Persona)}"
-            self.persona_instr = c.persona_instrs[persona]
-        self.model = gpt_model
-        self.client = Client()
-
-    def enhance(self, text: str) -> str:
-        """Return text enhanced by Gemini model."""
-        return enhancer_gpt(self.client, self.model, self.persona_instr, text)
+    def enhance(self, text: str):
+        return text
 
 
 class GeminiEnhancer(BaseEnhancer):
@@ -157,8 +99,6 @@ class GeminiEnhancer(BaseEnhancer):
         gemini_model: GeminiModel = GeminiModel.PRO_1_5_002,
         persona: Persona = Persona.DEFAULT,
         persona_instr: Optional[str] = None,
-        fallback_to_default: bool = False,
-        gpt_model: str = c.GPT_MODEL_DEFAULT,
     ):
         """
         Parameters
@@ -174,12 +114,6 @@ class GeminiEnhancer(BaseEnhancer):
         persona_instr : Optional[str]
             Custom persona instruction, can be used to give the LLM a custom
             persona (default: None).
-        fallback_to_default: bool, optional
-            Whether DefaultEnhancer be used in case GeminiEnhancer fails.
-            (default: False)
-        gpt_model : str, optional
-            The GPT model to be used for enhancement if fallback_to_default
-            is 'True'. (default: gpt-3.5-turbo).
         """
         if persona_instr is not None:
             self.persona_instr = persona_instr
@@ -191,25 +125,12 @@ class GeminiEnhancer(BaseEnhancer):
         self.model = gemini_model.value
         self.api_key = api_key
         self.default_enhancer = None
-        self.fallback_to_gpt = fallback_to_default
-        self.gpt_model = gpt_model
 
     def enhance(self, text: str) -> str:
         """Return text enhanced by Groq API."""
-        try:
-            return enhancer_gemini(
-                self.model, self.persona_instr, self.api_key, text
-            )
-        except Exception:
-            if self.fallback_to_gpt:
-                if self.default_enhancer is None:
-                    self.default_enhancer = DefaultEnhancer(
-                        persona_instr=self.persona_instr,
-                        gpt_model=self.gpt_model,
-                    )
-                return self.default_enhancer.enhance(text)
-            else:
-                raise
+        return enhancer_gemini(
+            self.model, self.persona_instr, self.api_key, text
+        )
 
 
 class GroqEnhancer(BaseEnhancer):
@@ -224,8 +145,6 @@ class GroqEnhancer(BaseEnhancer):
         groq_model: GroqModel = GroqModel.LLAMA_3_8B_8192,
         persona: Persona = Persona.DEFAULT,
         persona_instr: Optional[str] = None,
-        fallback_to_default: bool = False,
-        gpt_model: str = c.GPT_MODEL_DEFAULT,
     ):
         """
         Parameters
@@ -240,12 +159,6 @@ class GroqEnhancer(BaseEnhancer):
         persona_instr : Optional[str]
             Custom persona instruction, can be used to give the LLM a custom
             persona (default: None).
-        fallback_to_default: bool, optional
-            Whether DefaultEnhancer be used in case GeminiEnhancer fails.
-            (default: False)
-        gpt_model : str, optional
-            The GPT model to be used for enhancement if fallback_to_default
-            is 'True'. (default: gpt-3.5-turbo).
         """
         if persona_instr is not None:
             self.persona_instr = persona_instr
@@ -257,22 +170,9 @@ class GroqEnhancer(BaseEnhancer):
         self.model = groq_model
         self.api_key = api_key
         self.default_enhancer = None
-        self.fallback_to_gpt = fallback_to_default
-        self.gpt_model = gpt_model
 
     def enhance(self, text: str) -> str:
         """Returns text enhanced by Groq API."""
-        try:
-            return enhancer_groq(
-                self.model.value, self.api_key, self.persona_instr, text
-            )
-        except Exception:
-            if self.fallback_to_gpt:
-                if self.default_enhancer is None:
-                    self.default_enhancer = DefaultEnhancer(
-                        persona_instr=self.persona_instr,
-                        gpt_model=self.gpt_model,
-                    )
-                return self.default_enhancer.enhance(text)
-            else:
-                raise
+        return enhancer_groq(
+            self.model.value, self.api_key, self.persona_instr, text
+        )
