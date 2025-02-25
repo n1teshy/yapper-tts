@@ -95,7 +95,7 @@ class Yapper:
         tb: Optional[TracebackType],
     ):
         if exc_type:
-            err = exc_type.__name__ + (f"\n{exc_value}" if exc_value else "")
+            err = exc_type.__name__ + (f": {exc_value}" if exc_value else "")
             self.yap(err)
         return not exc_type
 
@@ -122,7 +122,7 @@ class Yapper:
                 try:
                     if not pass_yapper:
                         return func(*args, **kwargs)
-                    return func(*args, **kwargs, yapper=self.yap)
+                    return func(*args, **kwargs, yapper=self)
                 except Exception as e:
                     err = e.__class__.__name__
                     desc = str(e)
