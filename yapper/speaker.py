@@ -44,10 +44,16 @@ class BaseSpeaker(ABC):
     ----------
     say(text: str)
         Speaks the given text.
+    text_to_wave(text: str, file: str)
+        Speaks the given text, saves the speech to a wave file.
     """
 
     @abstractmethod
     def say(self, text: str):
+        pass
+
+    @abstractmethod
+    def text_to_wave(self, text: str, file: str):
         pass
 
 
@@ -77,6 +83,18 @@ class PyTTSXSpeaker(BaseSpeaker):
         self.voice = voice
         self.rate = rate
         self.volume = volume
+
+    def text_to_wave(self, text: str, file: str):
+        """Saves the speech for the given text into the given file."""
+        engine = tts.init()
+        engine.setProperty("rate", self.rate)
+        engine.setProperty("volume", self.volume)
+        voice_id = engine.getProperty("voices")[
+            int(self.voice == c.VOICE_FEMALE)
+        ].id
+        engine.setProperty("voice", voice_id)
+        engine.save_to_file(text, file)
+        engine.runAndWait()
 
     def say(self, text: str):
         """Speaks the given text"""
