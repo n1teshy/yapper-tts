@@ -29,6 +29,7 @@ def play_wave(wave_f: str):
     wave_f : str
         The wave file to play.
     """
+    pygame.mixer.init() # initialize pygame, safe to call multiple times
     sound = pygame.mixer.Sound(wave_f)
     sound.play()
     while pygame.mixer.get_busy():
@@ -158,7 +159,6 @@ class PiperSpeaker(BaseSpeaker):
             voice, quality, show_progress
         )
         self.onnx_f, self.conf_f = str(self.onnx_f), str(self.conf_f)
-        pygame.mixer.init()
 
     def text_to_wave(self, text: str, file: str):
         """Saves the speech for the given text into the given file."""
