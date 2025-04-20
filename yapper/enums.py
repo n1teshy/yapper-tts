@@ -12,24 +12,6 @@ class Persona(str, Enum):
     TARS = "TARS"
 
 
-class GeminiModel(str, Enum):
-    PRO_1_5_LATEST = "gemini-1.5-pro-latest"
-    PRO_1_5_002 = "gemini-1.5-pro-002"
-    PRO_1_5_EXP_0801 = "gemini-1.5-pro-exp-0801"
-    PRO_1_5_EXP_0827 = "gemini-1.5-pro-exp-0827"
-    FLASH_1_5_1_5_LATEST = "gemini-1.5-flash-latest"
-    FLASH_1_5_1_5_001 = "gemini-1.5-flash-001"
-    FLASH_1_5_001_TUNING = "gemini-1.5-flash-001-tuning"
-    FLASH_1_5 = "gemini-1.5-flash"
-    FLASH_1_5_EXP_0827 = "gemini-1.5-flash-exp-0827"
-    FLASH_1_5_002 = "gemini-1.5-flash-002"
-    FLASH_1_5_8B = "gemini-1.5-flash-8b"
-    FLASH_1_5_8B_001 = "gemini-1.5-flash-8b-001"
-    FLASH_1_5_8B_LATEST = "gemini-1.5-flash-8b-latest"
-    FLASH_1_5_8B_EXP_0827 = "gemini-1.5-flash-8b-exp-0827"
-    FLASH_1_5_8B_EXP_0924 = "gemini-1.5-flash-8b-exp-0924"
-
-
 class PiperVoiceUS(str, Enum):
     AMY = "amy"
     ARCTIC = "arctic"
@@ -70,22 +52,34 @@ class PiperQuality(str, Enum):
 
 
 class GroqModel(str, Enum):
-    LLAMA_3_8B_8192 = "llama3-8b-8192"
-    LLAMA_3_GROQ_70B_8192_TOOL_USE_PREVIEW = (
-        "llama3-groq-70b-8192-tool-use-preview"
-    )
-    LLAMA_3_GROQ_8B_8192_TOOL_USE_PREVIEW = (
-        "llama3-groq-8b-8192-tool-use-preview"
-    )
-    LLAMA_3_70B_8192 = "llama3-70b-8192"
-    LLAMA_3_1_8B_INSTANT = "llama-3.1-8b-instant"
-    LLAMA_3_2_1B_PREVIEW = "llama-3.2-1b-preview"
-    LLAMA_3_2_3B_PREVIEW = "llama-3.2-3b-preview"
-    LLAMA_3_2_11B_VISION_PREVIEW = "llama-3.2-11b-vision-preview"
-    LLAMA_3_2_90B_VISION_PREVIEW = "llama-3.2-90b-vision-preview"
-    LLAMA_3_3_70B_VERSATILE = "llama-3.3-70b-versatile"
-    LLAMA_3_3_70B_SPECDEC = "llama-3.3-70b-specdec"
-    LLAMA_GUARD_3_8B = "llama-guard-3-8b"
     GEMMA_2_9B_IT = "gemma2-9b-it"
-    GEMMA_7B_IT = "gemma-7b-it"
-    MIXTRAL_8X7B_32768 = "mixtral-8x7b-32768"
+    LLAMA_3_3_70B_VERSATILE = "llama-3.3-70b-versatile"
+    LLAMA_3_1_8B_INSTANT = "llama-3.1-8b-instant"
+    LLAMA_GUARD_3_8B = "llama-guard-3-8b"
+    LLAMA_2_70B_8192 = "llama3-70b-8192"
+    LLAMA_2_8B_8192 = "llama3-8b-8192"
+    ALLAM_2_7B = "allam-2-7b"
+    DEEPSEEK_R1_DISTILL_LLAMA_70B = "deepseek-r1-distill-llama-70b"
+    LLAMA_4_MAVERICK_17B_128E_INSTRUCT = (
+        "meta-llama/llama-4-maverick-17b-128e-instruct"
+    )
+    LLAMA_4_SCOUT_17B_16E_INSTRUCT = (
+        "meta-llama/llama-4-scout-17b-16e-instruct"
+    )
+    QWEN_QWQ_32B = "qwen-qwq-32b"
+
+
+class GeminiModel(str, Enum):
+    GEMINI_2_5_FLASH_PREVIEW_04_17 = "gemini-2.5-flash-preview-04-17"
+    GEMINI_2_0_FLASH = "gemini-2.0-flash"
+    GEMINI_2_0_FLASH_LITE = "gemini-2.0-flash-lite"
+    GEMINI_1_5_FLASH = "gemini-1.5-flash"
+    GEMINI_1_5_FLASH_8B = "gemini-1.5-flash-8b"
+    GEMINI_1_5_PRO = "gemini-1.5-pro"
+    GEMINI_2_0_FLASH_THINKING_EXP_01_21 = "gemini-2.0-flash-thinking-exp-01-21"
+    GEMINI_2_0_PRO_EXP_02_05 = "gemini-2.0-pro-exp-02-05"
+    GEMINI_2_0_FLASH_EXP = "gemini-2.0-flash-exp"
+    GEMINI_EXP_1206 = "gemini-exp-1206"
+    GEMINI_2_0_FLASH_THINKING_EXP_1219 = "gemini-2.0-flash-thinking-exp-1219"
+    GEMINI_1_5_FLASH_8B_EXP_0924 = "gemini-1.5-flash-8b-exp-0924"
+    GEMINI_1_5_FLASH_8B_EXP_0827 = "gemini-1.5-flash-8b-exp-0827"
