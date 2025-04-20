@@ -96,7 +96,7 @@ class GeminiEnhancer(BaseEnhancer):
     def __init__(
         self,
         api_key: str,
-        gemini_model: GeminiModel = GeminiModel.PRO_1_5_002,
+        model: GeminiModel = GeminiModel.GEMINI_1_5_PRO,
         persona: Persona = Persona.DEFAULT,
         persona_instr: Optional[str] = None,
     ):
@@ -122,7 +122,7 @@ class GeminiEnhancer(BaseEnhancer):
                 persona in Persona
             ), f"persona must be one of {', '.join(Persona)}"
             self.persona_instr = c.persona_instrs[persona]
-        self.model = gemini_model.value
+        self.model = model.value
         self.api_key = api_key
         self.default_enhancer = None
 
@@ -142,7 +142,7 @@ class GroqEnhancer(BaseEnhancer):
     def __init__(
         self,
         api_key: str,
-        groq_model: GroqModel = GroqModel.LLAMA_3_8B_8192,
+        model: GroqModel = GroqModel.LLAMA_3_1_8B_INSTANT,
         persona: Persona = Persona.DEFAULT,
         persona_instr: Optional[str] = None,
     ):
@@ -167,7 +167,7 @@ class GroqEnhancer(BaseEnhancer):
                 persona in Persona
             ), f"persona must be one of {', '.join(Persona)}"
             self.persona_instr = c.persona_instrs[persona]
-        self.model = groq_model
+        self.model = model
         self.api_key = api_key
         self.default_enhancer = None
 

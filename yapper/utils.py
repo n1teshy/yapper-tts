@@ -51,7 +51,7 @@ def progress_hook(block_idx: int, block_size: int, total_bytes: int):
     part = min(((block_idx + 1) * block_size) / total_bytes, 1)
     progress = "=" * int(60 * part)
     padding = " " * (60 - len(progress))
-    print("\r|" + progress + padding + "|", end="")
+    print("\r[" + progress + padding + "]", end="")
 
 
 def download(url: str, file: str, show_progress: bool):
@@ -73,10 +73,16 @@ def download(url: str, file: str, show_progress: bool):
         print("")
 
 
-def install_piper(show_progress: bool):
+def install_piper(show_progress: bool) -> Path:
     """Installs piper into the app's home directory."""
-    if (APP_DIR / "piper").exists():
-        return
+    exe_path = (
+        APP_DIR
+        / "piper"
+        / ("piper.exe" if PLATFORM == c.PLATFORM_WINDOWS else "piper")
+    )
+    marker_file = APP_DIR / "piper_installed"
+    if marker_file.exists():
+        return exe_path
     zip_path = APP_DIR / "piper.zip"
     if show_progress:
         print("installing piper...")
@@ -101,13 +107,15 @@ def install_piper(show_progress: bool):
         with tarfile.open(zip_path, "r") as z_f:
             z_f.extractall(APP_DIR)
     os.remove(zip_path)
+    marker_file.write_bytes(b"")
+    return exe_path
 
 
 def download_piper_model(
     voice: PiperVoiceUS | PiperVoiceUK,
     quality: PiperQuality,
     show_progress: bool,
-) -> tuple[str, str]:
+) -> tuple[Path, Path]:
     """
     Downloads the given piper voice with the given quality.
 
@@ -128,8 +136,11 @@ def download_piper_model(
     lang_code = "en_US" if isinstance(voice, PiperVoiceUS) else "en_GB"
     voice, quality = voice.value, quality.value
 
+    marker_file = voices_dir / f"{lang_code}-{voice}-{quality}"
     onnx_file = voices_dir / f"{lang_code}-{voice}-{quality}.onnx"
     conf_file = voices_dir / f"{lang_code}-{voice}-{quality}.onnx.json"
+    if marker_file.exists():
+        return onnx_file, conf_file
 
     prefix = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/"
     prefix += lang_code
@@ -158,5 +169,5 @@ def download_piper_model(
         except (KeyboardInterrupt, Exception) as e:
             conf_file.unlink(missing_ok=True)
             raise e
-
-    return str(onnx_file), str(conf_file)
+    marker_file.write_bytes(b"")
+    return onnx_file, conf_file

@@ -9,10 +9,9 @@ import yapper.constants as c
 from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
 from yapper.utils import (
     APP_DIR,
-    PLATFORM,
     download_piper_model,
     get_random_name,
-    install_piper,
+    install_piper
 )
 
 # suppresses pygame's welcome message
@@ -29,7 +28,7 @@ def play_wave(wave_f: str):
     wave_f : str
         The wave file to play.
     """
-    pygame.mixer.init() # initialize pygame, safe to call multiple times
+    pygame.mixer.init()  # initialize pygame, safe to call multiple times
     sound = pygame.mixer.Sound(wave_f)
     sound.play()
     while pygame.mixer.get_busy():
@@ -167,12 +166,8 @@ class PiperSpeaker(BaseSpeaker):
         ), "voice must be a member of PiperVoiceUS or PiperVoiceUK"
         quality = quality or PiperSpeaker.VOICE_QUALITY_MAP[voice]
         assert quality in PiperQuality, "quality must a member of PiperQuality"
-        install_piper(show_progress)
-        self.exe_path = str(
-            APP_DIR
-            / "piper"
-            / ("piper.exe" if PLATFORM == c.PLATFORM_WINDOWS else "piper")
-        )
+
+        self.exe_path = str(install_piper(show_progress))
         self.onnx_f, self.conf_f = download_piper_model(
             voice, quality, show_progress
         )
