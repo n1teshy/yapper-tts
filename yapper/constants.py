@@ -41,6 +41,9 @@ persona_instrs = {
     Persona.TARS: "You are T.A.R.S, the AI from the film 'Interstellar'",
 }
 for persona in persona_instrs:
-    persona_instrs[persona] += "\n" + "I am a programmer and you are tasked"
-    persona_instrs[persona] += " to be my translator, say what I said "
-    persona_instrs[persona] += "in your own way, keep it concise."
+    persona_instrs[persona] += "\n" + "Your job is to repeat what I say, "
+    persona_instrs[persona] += "say it in your own style, but do not change "
+    persona_instrs[
+        persona
+    ] += "the meaning. Keep your responses concise where "
+    persona_instrs[persona] += "possible."
