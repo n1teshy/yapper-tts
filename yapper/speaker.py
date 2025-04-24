@@ -19,7 +19,7 @@ os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 import pygame  # noqa: E402
 
 
-def play_wave(wave_f: str):
+def play_wave(wave_f: str, volume: float = 1.0):
     """
     Plays the given wave file using pygame.
 
@@ -27,9 +27,13 @@ def play_wave(wave_f: str):
     ----------
     wave_f : str
         The wave file to play.
+    volume : float, optional
+        Volume to play the wave file between 0.0 and 1.0 (default: 1.0)
     """
     pygame.mixer.init()  # initialize pygame, safe to call multiple times
     sound = pygame.mixer.Sound(wave_f)
+    sound.set_volume(volume)  # sets volume, defaults to 1
+
     sound.play()
     while pygame.mixer.get_busy():
         pygame.time.wait(100)
@@ -146,6 +150,7 @@ class PiperSpeaker(BaseSpeaker):
         voice: PiperVoiceUS | PiperVoiceUK = PiperVoiceUS.HFC_FEMALE,
         quality: Optional[PiperQuality] = None,
         show_progress: bool = True,
+        volume: float = 1.0,
     ):
         """
         Parameters
@@ -160,6 +165,8 @@ class PiperSpeaker(BaseSpeaker):
         show_progress : bool
             Show progress when the voice model is being downloaded
             (default: True).
+        volume : float, optional
+            volume to play the wav file at, between 0.0 and 1.0 (defaults to 1.0)
         """
         assert isinstance(
             voice, (PiperVoiceUS, PiperVoiceUK)
@@ -172,6 +179,8 @@ class PiperSpeaker(BaseSpeaker):
             voice, quality, show_progress
         )
         self.onnx_f, self.conf_f = str(self.onnx_f), str(self.conf_f)
+
+        self.volume = volume
 
     def text_to_wave(self, text: str, file: str):
         """Saves the speech for the given text into the given file."""
@@ -196,7 +205,7 @@ class PiperSpeaker(BaseSpeaker):
         f = APP_DIR / f"{get_random_name()}.wav"
         try:
             self.text_to_wave(text, str(f))
-            play_wave(str(f))
+            play_wave(str(f), self.volume)
         finally:
             if f.exists():
                 os.remove(f)
