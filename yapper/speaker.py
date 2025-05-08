@@ -11,7 +11,7 @@ from yapper.utils import (
     APP_DIR,
     download_piper_model,
     get_random_name,
-    install_piper
+    install_piper,
 )
 
 # suppresses pygame's welcome message

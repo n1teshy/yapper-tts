@@ -8,7 +8,7 @@ from yapper import (
     GroqModel,
     PiperSpeaker,
     PiperVoiceUK,
-    PiperVoiceUS
+    PiperVoiceUS,
 )
 
 
