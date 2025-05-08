@@ -31,6 +31,8 @@ class PiperVoiceUS(str, Enum):
     LIBRITTS = "libritts"
     LIBRITTS_R = "libritts_r"
     RYAN = "ryan"
+    REZA_IBRAHIM = "reza_ibrahim"
+    SAM = "sam"
 
 
 class PiperVoiceUK(str, Enum):

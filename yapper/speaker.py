@@ -134,6 +134,8 @@ class PiperSpeaker(BaseSpeaker):
         PiperVoiceUS.LJSPEECH: PiperQuality.HIGH,
         PiperVoiceUS.NORMAN: PiperQuality.MEDIUM,
         PiperVoiceUS.RYAN: PiperQuality.HIGH,
+        PiperVoiceUS.REZA_IBRAHIM: PiperQuality.MEDIUM,
+        PiperVoiceUS.SAM: PiperQuality.MEDIUM,
         PiperVoiceUK.ALAN: PiperQuality.MEDIUM,
         PiperVoiceUK.ALBA: PiperQuality.MEDIUM,
         PiperVoiceUK.ARU: PiperQuality.MEDIUM,
@@ -166,7 +168,8 @@ class PiperSpeaker(BaseSpeaker):
             Show progress when the voice model is being downloaded
             (default: True).
         volume : float, optional
-            volume to play the wav file at, between 0.0 and 1.0 (defaults to 1.0)
+            volume to play the wav file at, between 0.0 and 1.0
+            (defaults to 1.0)
         """
         assert isinstance(
             voice, (PiperVoiceUS, PiperVoiceUK)
