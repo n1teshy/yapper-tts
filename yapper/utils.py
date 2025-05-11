@@ -4,13 +4,15 @@ import random
 import string
 import sys
 import tarfile
+import unicodedata
 import zipfile
 from pathlib import Path
+from urllib.parse import quote
 from urllib.request import urlretrieve
 
 import yapper.constants as c
 import yapper.meta as meta
-from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
+from yapper.enums import PiperQuality, PiperVoice
 
 PLATFORM = None
 APP_DIR = None
@@ -44,6 +46,15 @@ def get_random_name(length: int = 10) -> str:
         Length of the random string (default: 10).
     """
     return "".join(random.choices(string.ascii_letters, k=length))
+
+
+def normalize_path(name: str) -> Path:
+    norm = (
+        unicodedata.normalize("NFKD", str(name))
+        .encode("ascii", "ignore")
+        .decode("utf-8")
+    )
+    return Path(norm)
 
 
 def progress_hook(block_idx: int, block_size: int, total_bytes: int):
@@ -112,7 +123,7 @@ def install_piper(show_progress: bool) -> Path:
 
 
 def download_piper_model(
-    voice: PiperVoiceUS | PiperVoiceUK,
+    voice: PiperVoice,
     quality: PiperQuality,
     show_progress: bool,
 ) -> tuple[Path, Path]:
@@ -121,7 +132,7 @@ def download_piper_model(
 
     Parameters
     ----------
-    voice : PiperVoiceUS or PiperVoiceUK
+    voice : PiperVoiceUS or PiperVoiceGB
         The Piper voice model to download.
     quality : PiperQuality
         The quality of the given voice.
@@ -133,39 +144,41 @@ def download_piper_model(
     """
     voices_dir = APP_DIR / "piper_voices"
     voices_dir.mkdir(exist_ok=True)
-    lang_code = "en_US" if isinstance(voice, PiperVoiceUS) else "en_GB"
+    lang_code = c.piper_enum_to_lang_code[voice.__class__]
     voice, quality = voice.value, quality.value
 
     marker_file = voices_dir / f"{lang_code}-{voice}-{quality}"
     onnx_file = voices_dir / f"{lang_code}-{voice}-{quality}.onnx"
     conf_file = voices_dir / f"{lang_code}-{voice}-{quality}.onnx.json"
+
+    prefix = "https://huggingface.co/rhasspy/piper-voices/resolve/main/"
+    prefix += lang_code.split("_")[0] + "/" + lang_code
+
+    onnx_url = f"{prefix}/{voice}/{quality}/{onnx_file.name}?download=true"
+    conf_url = f"{prefix}/{voice}/{quality}/{conf_file.name}?download=true"
+
+    marker_file = normalize_path(marker_file)
+    onnx_file = normalize_path(onnx_file)
+    conf_file = normalize_path(conf_file)
+
     if marker_file.exists():
         return onnx_file, conf_file
-
-    prefix = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/"
-    prefix += lang_code
-    help_url = "https://huggingface.co/rhasspy/piper-voices/tree/main/en/"
-    help_url += lang_code
     if not onnx_file.exists():
         try:
             if show_progress:
                 print(f"downloading requirements for {voice}...")
-            onnx_url = (
-                f"{prefix}/{voice}/{quality}/{onnx_file.name}?download=true"
-            )
-            download(onnx_url, onnx_file, show_progress)
+            download(quote(onnx_url, safe=":/?=&"), onnx_file, show_progress)
         except (KeyboardInterrupt, Exception) as e:
             onnx_file.unlink(missing_ok=True)
             if getattr(e, "status", None) == 404:
                 raise Exception(
                     f"{voice}({quality}) is not available, please refer to"
-                    f" {help_url} to check all available models"
+                    f" {prefix} to check all available models"
                 )
             raise e
     if not conf_file.exists():
-        conf_url = f"{prefix}/{voice}/{quality}/{conf_file.name}?download=true"
         try:
-            download(conf_url, conf_file, show_progress)
+            download(quote(conf_url, safe=":/?=&"), conf_file, show_progress)
         except (KeyboardInterrupt, Exception) as e:
             conf_file.unlink(missing_ok=True)
             raise e

@@ -1,6 +1,6 @@
 ## Yapper
 
-Yapper is a lightweight, offline, real-time, easily extendible, text-to-speech library with more than a dozen voices, it can also, optionally use SOTA LLMs through free APIs to enhance(personalize) your text according to a predefined system-message(personality).
+Yapper is a lightweight, offline, easily extendible, text-to-speech library with 136 voices across 39 localities (thanks to the [piper project](https://github.com/rhasspy/piper)), it can also optionally use SOTA LLMs through their free APIs to enhance(personalize) your text according to a predefined system-message(personality).
 
 the use of the word 'enhance' in this repository means adding a 'vibe' to your text, you might ask yapper to say "hello world" and
 it could say "ay what's good G, what's bangin'" depending on the persona you give it.
@@ -55,13 +55,13 @@ with Yapper() as yapper:
 
 a speaker is a `BaseSpeaker` subclass that implements a `say()` method, the method takes the text and, well, 'speaks' it.
 there are two built-in speakers, `PyTTSXSpeaker` that uses [pyttsx3](https://github.com/nateshmbhat/pyttsx3) and
-`PiperSpeaker` that uses [piper](https://github.com/rhasspy/piper), `PiperSpeaker` is used by default in `Yapper` instances. Piper offers many voices in `low, medium and high` qualities, you can use any of them by passing a value from `PiperVoiceUS` or `PiperVoiceUK` enum as the voice argument to `PiperSpeaker` and the quality you want using `PiperQuality` value, by default, the voice will be used in the highest available quality. you can subclass `BaseSpeaker` to pass your own speaker to a Yapper instance.
+`PiperSpeaker` that uses [piper](https://github.com/rhasspy/piper), `PiperSpeaker` is used by default in `Yapper` instances. Piper offers many voices in `x_low, low, medium and high` qualities. You can use any of these voices by passing a value from the many `PiperVoice* (e.g. PiperVoiceUS, PiperVoiceGB, PiperVoiceGermany etc)` enums as the voice argument to `PiperSpeaker` and pass the quality you want using the `PiperQuality` enum, by default, the voice will be used in the highest available quality. you can subclass `BaseSpeaker` to pass your own speaker to a Yapper instance.
 
 ```python
-from yapper import Yapper, PiperSpeaker, PiperVoiceUK, PiperQuality
+from yapper import Yapper, PiperSpeaker, PiperVoiceGB, PiperQuality
 
 lessac = PiperSpeaker(
-    voice=PiperVoiceUK.ALAN
+    voice=PiperVoiceGB.ALAN
 )
 lessac.say("hello")
 

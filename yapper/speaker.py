@@ -6,7 +6,7 @@ from typing import Optional
 import pyttsx3 as tts
 
 import yapper.constants as c
-from yapper.enums import PiperQuality, PiperVoiceUK, PiperVoiceUS
+from yapper.enums import PiperQuality, PiperVoice, PiperVoiceUS
 from yapper.utils import (
     APP_DIR,
     download_piper_model,
@@ -115,41 +115,9 @@ class PyTTSXSpeaker(BaseSpeaker):
 class PiperSpeaker(BaseSpeaker):
     """Converts text to speech using piper-tts"""
 
-    VOICE_QUALITY_MAP = {
-        PiperVoiceUS.AMY: PiperQuality.MEDIUM,
-        PiperVoiceUS.ARCTIC: PiperQuality.MEDIUM,
-        PiperVoiceUS.BRYCE: PiperQuality.MEDIUM,
-        PiperVoiceUS.DANNY: PiperQuality.LOW,
-        PiperVoiceUS.HFC_FEMALE: PiperQuality.MEDIUM,
-        PiperVoiceUS.HFC_MALE: PiperQuality.MEDIUM,
-        PiperVoiceUS.JOE: PiperQuality.MEDIUM,
-        PiperVoiceUS.JOHN: PiperQuality.MEDIUM,
-        PiperVoiceUS.KATHLEEN: PiperQuality.LOW,
-        PiperVoiceUS.KRISTIN: PiperQuality.MEDIUM,
-        PiperVoiceUS.KUSAL: PiperQuality.MEDIUM,
-        PiperVoiceUS.L2ARCTIC: PiperQuality.MEDIUM,
-        PiperVoiceUS.LESSAC: PiperQuality.HIGH,
-        PiperVoiceUS.LIBRITTS: PiperQuality.HIGH,
-        PiperVoiceUS.LIBRITTS_R: PiperQuality.MEDIUM,
-        PiperVoiceUS.LJSPEECH: PiperQuality.HIGH,
-        PiperVoiceUS.NORMAN: PiperQuality.MEDIUM,
-        PiperVoiceUS.RYAN: PiperQuality.HIGH,
-        PiperVoiceUS.REZA_IBRAHIM: PiperQuality.MEDIUM,
-        PiperVoiceUS.SAM: PiperQuality.MEDIUM,
-        PiperVoiceUK.ALAN: PiperQuality.MEDIUM,
-        PiperVoiceUK.ALBA: PiperQuality.MEDIUM,
-        PiperVoiceUK.ARU: PiperQuality.MEDIUM,
-        PiperVoiceUK.CORI: PiperQuality.HIGH,
-        PiperVoiceUK.JENNY_DIOCO: PiperQuality.MEDIUM,
-        PiperVoiceUK.NORTHERN_ENGLISH_MALE: PiperQuality.MEDIUM,
-        PiperVoiceUK.SEMAINE: PiperQuality.MEDIUM,
-        PiperVoiceUK.SOUTHERN_ENGLISH_FEMALE: PiperQuality.LOW,
-        PiperVoiceUK.VCTK: PiperQuality.MEDIUM,
-    }
-
     def __init__(
         self,
-        voice: PiperVoiceUS | PiperVoiceUK = PiperVoiceUS.HFC_FEMALE,
+        voice: PiperVoice = PiperVoiceUS.HFC_FEMALE,
         quality: Optional[PiperQuality] = None,
         show_progress: bool = True,
         volume: float = 1.0,
@@ -157,9 +125,9 @@ class PiperSpeaker(BaseSpeaker):
         """
         Parameters
         ----------
-        voice : PiperVoiceUS, optional
-            Name of the piper voice to be used, can be one of 'PiperVoiceUS'
-            enum's attributes (default: PiperVoiceUS.AMY).
+        voice : PiperVoice, optional
+            Name of the piper voice to be used, can be one of PiperVoice*
+            enums's attributes (default: PiperVoiceUS.AMY).
         quality : PiperQuality, optional
             Quality of the voice, can be ont of 'PiperQuality'
             enum's attributes (default: the highest available quality of
@@ -172,9 +140,9 @@ class PiperSpeaker(BaseSpeaker):
             (defaults to 1.0)
         """
         assert isinstance(
-            voice, (PiperVoiceUS, PiperVoiceUK)
-        ), "voice must be a member of PiperVoiceUS or PiperVoiceUK"
-        quality = quality or PiperSpeaker.VOICE_QUALITY_MAP[voice]
+            voice, tuple(c.piper_enum_to_lang_code.keys())
+        ), "voice must be a member of PiperVoice* enums"
+        quality = quality or c.piper_voice_quality_map[voice]
         assert quality in PiperQuality, "quality must a member of PiperQuality"
 
         self.exe_path = str(install_piper(show_progress))

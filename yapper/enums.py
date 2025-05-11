@@ -1,18 +1,209 @@
 from enum import Enum
 
 
-class Persona(str, Enum):
-    DEFAULT = "companion"
-    JARVIS = "jarvis"
-    FRIDAY = "friday"
-    ALFRED = "alfred"
-    HAL = "HAL"
-    CORTANA = "cortana"
-    SAMANTHA = "samantha"
-    TARS = "TARS"
+class PiperVoice(str, Enum):
+    pass
 
 
-class PiperVoiceUS(str, Enum):
+class PiperVoiceJordan(PiperVoice):
+    KAREEM = "kareem"
+
+
+class PiperVoiceCatalonia(PiperVoice):
+    UPC_ONA = "upc_ona"
+    UPC_PAU = "upc_pau"
+
+
+class PiperVoiceCzech(PiperVoice):
+    JIRKA = "jirka"
+
+
+class PiperVoiceWales(PiperVoice):
+    BU_TTS = "bu_tts"
+    GWRYW_GOGLEDDOL = "gwryw_gogleddol"
+
+
+class PiperVoiceDenmark(PiperVoice):
+    TALESYNTESE = "talesyntese"
+
+
+class PiperVoiceGermany(PiperVoice):
+    EVA_K = "eva_k"
+    KARLSSON = "karlsson"
+    KERSTIN = "kerstin"
+    MLS = "mls"
+    PAVOQUE = "pavoque"
+    RAMONA = "ramona"
+    THORSTEN = "thorsten"
+    THORSTEN_EMOTIONAL = "thorsten_emotional"
+
+
+class PiperVoiceGreece(PiperVoice):
+    RAPUNZELINA = "rapunzelina"
+
+
+class PiperVoiceSpain(PiperVoice):
+    CARLFM = "carlfm"
+    DAVEFX = "davefx"
+    MLS_10246 = "mls_10246"
+    MLS_9972 = "mls_9972"
+    SHARVARD = "sharvard"
+
+
+class PiperVoiceMexico(PiperVoice):
+    ALD = "ald"
+    CLAUDE = "claude"
+
+
+class PiperVoiceIran(PiperVoice):
+    AMIR = "amir"
+    GANJI = "ganji"
+    GANJI_ADABI = "ganji_adabi"
+    GYRO = "gyro"
+    REZA_IBRAHIM = "reza_ibrahim"
+
+
+class PiperVoiceFinland(PiperVoice):
+    HARRI = "harri"
+
+
+class PiperVoiceFrance(PiperVoice):
+    GILLES = "gilles"
+    MLS = "mls"
+    MLS_1840 = "mls_1840"
+    SIWIS = "siwis"
+    TOM = "tom"
+    UPMC = "upmc"
+
+
+class PiperVoiceHungary(PiperVoice):
+    ANNA = "anna"
+    BERTA = "berta"
+    IMRE = "imre"
+
+
+class PiperVoiceIceland(PiperVoice):
+    BUI = "bui"
+    SALKA = "salka"
+    STEINN = "steinn"
+    UGLA = "ugla"
+
+
+class PiperVoiceItaly(PiperVoice):
+    PAOLA = "paola"
+    RICCARDO = "riccardo"
+
+
+class PiperVoiceGeorgia(PiperVoice):
+    NATIA = "natia"
+
+
+class PiperVoiceKazakhstan(PiperVoice):
+    ISEKE = "iseke"
+    ISSAI = "issai"
+    RAYA = "raya"
+
+
+class PiperVoiceLuxembourg(PiperVoice):
+    MARYLUX = "marylux"
+
+
+class PiperVoiceLatvia(PiperVoice):
+    AIVARS = "aivars"
+
+
+class PiperVoiceNepal(PiperVoice):
+    GOOGLE = "google"
+
+
+class PiperVoiceBelgium(PiperVoice):
+    NATHALIE = "nathalie"
+    RDH = "rdh"
+
+
+class PiperVoiceNetherlands(PiperVoice):
+    MLS = "mls"
+    MLS_5809 = "mls_5809"
+    MLS_7432 = "mls_7432"
+    PIM = "pim"
+    RONNIE = "ronnie"
+
+
+class PiperVoiceNorway(PiperVoice):
+    TALESYNTESE = "talesyntese"
+
+
+class PiperVoicePoland(PiperVoice):
+    DARKMAN = "darkman"
+    GOSIA = "gosia"
+    MC_SPEECH = "mc_speech"
+
+
+class PiperVoiceBrazil(PiperVoice):
+    CADU = "cadu"
+    EDRESSON = "edresson"
+    FABER = "faber"
+    JEFF = "jeff"
+
+
+class PiperVoicePortugal(PiperVoice):
+    TUGAO = "tugão"
+
+
+class PiperVoiceRomania(PiperVoice):
+    MIHAI = "mihai"
+
+
+class PiperVoiceRussia(PiperVoice):
+    DENIS = "denis"
+    DMITRI = "dmitri"
+    IRINA = "irina"
+    RUSLAN = "ruslan"
+
+
+class PiperVoiceSlovakia(PiperVoice):
+    LILI = "lili"
+
+
+class PiperVoiceSlovenia(PiperVoice):
+    ARTUR = "artur"
+
+
+class PiperVoiceSerbia(PiperVoice):
+    SERBSKI_INSTITUT = "serbski_institut"
+
+
+class PiperVoiceSweden(PiperVoice):
+    LISA = "lisa"
+    NST = "nst"
+
+
+class PiperVoiceCongo(PiperVoice):
+    LANFRICA = "lanfrica"
+
+
+class PiperVoiceTurkey(PiperVoice):
+    DFKI = "dfki"
+    FAHRETTIN = "fahrettin"
+    FETTAH = "fettah"
+
+
+class PiperVoiceUkraine(PiperVoice):
+    LADA = "lada"
+    UKRAINIAN_TTS = "ukrainian_tts"
+
+
+class PiperVoiceVietnam(PiperVoice):
+    HOURS_SINGLE = "25hours_single"
+    VAIS1000 = "vais1000"
+    VIVOS = "vivos"
+
+
+class PiperVoiceChina(PiperVoice):
+    HUAYAN = "huayan"
+
+
+class PiperVoiceUS(PiperVoice):
     AMY = "amy"
     ARCTIC = "arctic"
     BRYCE = "bryce"
@@ -35,7 +226,7 @@ class PiperVoiceUS(str, Enum):
     SAM = "sam"
 
 
-class PiperVoiceUK(str, Enum):
+class PiperVoiceGB(PiperVoice):
     ALAN = "alan"
     ALBA = "alba"
     ARU = "aru"
@@ -47,7 +238,50 @@ class PiperVoiceUK(str, Enum):
     VCTK = "vctk"
 
 
+class PiperVoice(Enum):
+    JORDAN = PiperVoiceJordan
+    CATALONIA = PiperVoiceCatalonia
+    CZECH = PiperVoiceCzech
+    WALES = PiperVoiceWales
+    DENMARK = PiperVoiceDenmark
+    GERMANY = PiperVoiceGermany
+    GREECE = PiperVoiceGreece
+    SPAIN = PiperVoiceSpain
+    MEXICO = PiperVoiceMexico
+    IRAN = PiperVoiceIran
+    FINLAND = PiperVoiceFinland
+    FRANCE = PiperVoiceFrance
+    HUNGARY = PiperVoiceHungary
+    ICELAND = PiperVoiceIceland
+    ITALY = PiperVoiceItaly
+    GEORGIA = PiperVoiceGeorgia
+    KAZAKHSTAN = PiperVoiceKazakhstan
+    LUXEMBOURG = PiperVoiceLuxembourg
+    LATVIA = PiperVoiceLatvia
+    NEPAL = PiperVoiceNepal
+    BELGIUM = PiperVoiceBelgium
+    NETHERLANDS = PiperVoiceNetherlands
+    NORWAY = PiperVoiceNorway
+    POLAND = PiperVoicePoland
+    BRAZIL = PiperVoiceBrazil
+    PORTUGAL = PiperVoicePortugal
+    ROMANIA = PiperVoiceRomania
+    RUSSIA = PiperVoiceRussia
+    SLOVAKIA = PiperVoiceSlovakia
+    SLOVENIA = PiperVoiceSlovenia
+    SERBIA = PiperVoiceSerbia
+    SWEDEN = PiperVoiceSweden
+    CONGO = PiperVoiceCongo
+    TURKEY = PiperVoiceTurkey
+    UKRAINE = PiperVoiceUkraine
+    VIETNAM = PiperVoiceVietnam
+    CHINA = PiperVoiceChina
+    US = PiperVoiceUS
+    GB = PiperVoiceGB
+
+
 class PiperQuality(str, Enum):
+    X_LOW = "x_low"
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -85,3 +319,14 @@ class GeminiModel(str, Enum):
     GEMINI_2_0_FLASH_THINKING_EXP_1219 = "gemini-2.0-flash-thinking-exp-1219"
     GEMINI_1_5_FLASH_8B_EXP_0924 = "gemini-1.5-flash-8b-exp-0924"
     GEMINI_1_5_FLASH_8B_EXP_0827 = "gemini-1.5-flash-8b-exp-0827"
+
+
+class Persona(str, Enum):
+    DEFAULT = "companion"
+    JARVIS = "jarvis"
+    FRIDAY = "friday"
+    ALFRED = "alfred"
+    HAL = "HAL"
+    CORTANA = "cortana"
+    SAMANTHA = "samantha"
+    TARS = "TARS"
