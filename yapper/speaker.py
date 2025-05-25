@@ -1,5 +1,6 @@
 import os
 import subprocess
+import tempfile
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -7,12 +8,7 @@ import pyttsx3 as tts
 
 import yapper.constants as c
 from yapper.enums import PiperQuality, PiperVoice, PiperVoiceUS
-from yapper.utils import (
-    APP_DIR,
-    download_piper_model,
-    get_random_name,
-    install_piper,
-)
+from yapper.utils import download_piper_model, install_piper
 
 # suppresses pygame's welcome message
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
@@ -173,10 +169,9 @@ class PiperSpeaker(BaseSpeaker):
 
     def say(self, text: str):
         """Speaks the given text"""
-        f = APP_DIR / f"{get_random_name()}.wav"
+        f = tempfile.NamedTemporaryFile(delete=False, suffix=".wav").name
         try:
-            self.text_to_wave(text, str(f))
-            play_wave(str(f), self.volume)
+            self.text_to_wave(text, f)
+            play_wave(f, self.volume)
         finally:
-            if f.exists():
-                os.remove(f)
+            os.remove(f)

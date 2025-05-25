@@ -1,7 +1,5 @@
 import os
 import platform
-import random
-import string
 import sys
 import tarfile
 import unicodedata
@@ -34,18 +32,6 @@ else:
 
 APP_DIR = APP_DIR / meta.name
 APP_DIR.mkdir(exist_ok=True)
-
-
-def get_random_name(length: int = 10) -> str:
-    """
-    Creates a 'length' letter random string.
-
-    Parameters
-    ----------
-    length : int, optional
-        Length of the random string (default: 10).
-    """
-    return "".join(random.choices(string.ascii_letters, k=length))
 
 
 def normalize_path(name: str) -> Path:
