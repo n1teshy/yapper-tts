@@ -117,6 +117,7 @@ class PiperSpeaker(BaseSpeaker):
         quality: Optional[PiperQuality] = None,
         show_progress: bool = True,
         volume: float = 1.0,
+        speed: float = 1.0,
     ):
         """
         Parameters
@@ -134,6 +135,9 @@ class PiperSpeaker(BaseSpeaker):
         volume : float, optional
             volume to play the wav file at, between 0.0 and 1.0
             (defaults to 1.0)
+        speed : float, optional
+            speed to play the wav file at (ex: 2 for 2x)
+            (defaults to 1.0 for 1x)
         """
         assert isinstance(
             voice, tuple(c.piper_enum_to_lang_code.keys())
@@ -149,6 +153,9 @@ class PiperSpeaker(BaseSpeaker):
 
         self.volume = volume
 
+        self.speed = speed
+        self.length_scale = str(1/self.speed)
+
     def text_to_wave(self, text: str, file: str):
         """Saves the speech for the given text into the given file."""
         subprocess.run(
@@ -161,6 +168,8 @@ class PiperSpeaker(BaseSpeaker):
                 "-f",
                 file,
                 "-q",
+                "--length-scale",
+                self.length_scale  # this "length_scale" is just the speed value inverted
             ],
             input=text.encode("utf-8"),
             stdout=subprocess.DEVNULL,
