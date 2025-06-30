@@ -146,6 +146,13 @@ def test_speakers():
             except Exception as e:
                 print("error: %r" % (e,))
                 return False
+
+            print("%s -> %s @ 2x" % (locality, voice.value))
+            try:
+                PiperSpeaker(voice=voice, speed=2).say(text)
+            except Exception as e:
+                print("error: %r" % (e,))
+                return False
             finally:
                 print("--------")
     return True
