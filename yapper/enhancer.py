@@ -7,9 +7,7 @@ import yapper.constants as c
 from yapper.enums import GeminiModel, GroqModel, Persona
 
 
-def enhancer_gemini(
-    model: str, persona_instr: str, api_key: str, text: str
-) -> str:
+def enhancer_gemini(model: str, persona_instr: str, api_key: str, text: str) -> str:
     """
     Enhances the given text using Gemini.
 
@@ -30,14 +28,10 @@ def enhancer_gemini(
         "Content-Type": "application/json",
     }
     data = {
-        c.GEMINI_FLD_SYS_INST: {
-            c.GEMINI_FLD_PARTS: {c.GEMINI_FLD_TEXT: persona_instr}
-        },
+        c.GEMINI_FLD_SYS_INST: {c.GEMINI_FLD_PARTS: {c.GEMINI_FLD_TEXT: persona_instr}},
         c.GEMINI_FLD_CONTENTS: {c.GEMINI_FLD_PARTS: {c.GEMINI_FLD_TEXT: text}},
     }
-    request = Request(
-        url, headers=headers, data=json.dumps(data).encode("utf-8")
-    )
+    request = Request(url, headers=headers, data=json.dumps(data).encode("utf-8"))
     with urlopen(request) as response:
         data = json.loads(response.read())
         return data[c.GEMINI_FLD_CANDIDATES][0][c.GEMINI_FLD_CONTENT][
@@ -45,9 +39,7 @@ def enhancer_gemini(
         ][0][c.GEMINI_FLD_TEXT]
 
 
-def enhancer_groq(
-    model: str, api_key: str, persona_instr: str, text: str
-) -> str:
+def enhancer_groq(model: str, api_key: str, persona_instr: str, text: str) -> str:
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Content-Type": "application/json",
@@ -96,7 +88,7 @@ class GeminiEnhancer(BaseEnhancer):
     def __init__(
         self,
         api_key: str,
-        model: GeminiModel = GeminiModel.GEMINI_1_5_PRO,
+        model: GeminiModel = GeminiModel.GEMINI_2_5_FLASH,
         persona: Persona = Persona.DEFAULT,
         persona_instr: Optional[str] = None,
     ):
@@ -108,7 +100,7 @@ class GeminiEnhancer(BaseEnhancer):
         gemini_model : GeminiModel, optional
             the gemini model to use for enhancement, must be one of
             'GeminiModel' enum's attributes
-            (default: GeminiModel.PRO_1_5_002).
+            (default: GeminiModel.GEMINI_2_5_FLASH).
         persona : Persona, optional
             The persona to be used for enhancement (default: Persona.DEFAULT).
         persona_instr : Optional[str]
@@ -118,9 +110,7 @@ class GeminiEnhancer(BaseEnhancer):
         if persona_instr is not None:
             self.persona_instr = persona_instr
         else:
-            assert (
-                persona in Persona
-            ), f"persona must be one of {', '.join(Persona)}"
+            assert persona in Persona, f"persona must be one of {', '.join(Persona)}"
             self.persona_instr = c.persona_instrs[persona]
         self.model = model.value
         self.api_key = api_key
@@ -128,9 +118,7 @@ class GeminiEnhancer(BaseEnhancer):
 
     def enhance(self, text: str) -> str:
         """Return text enhanced by Groq API."""
-        return enhancer_gemini(
-            self.model, self.persona_instr, self.api_key, text
-        )
+        return enhancer_gemini(self.model, self.persona_instr, self.api_key, text)
 
 
 class GroqEnhancer(BaseEnhancer):
@@ -163,9 +151,7 @@ class GroqEnhancer(BaseEnhancer):
         if persona_instr is not None:
             self.persona_instr = persona_instr
         else:
-            assert (
-                persona in Persona
-            ), f"persona must be one of {', '.join(Persona)}"
+            assert persona in Persona, f"persona must be one of {', '.join(Persona)}"
             self.persona_instr = c.persona_instrs[persona]
         self.model = model
         self.api_key = api_key
@@ -173,6 +159,4 @@ class GroqEnhancer(BaseEnhancer):
 
     def enhance(self, text: str) -> str:
         """Returns text enhanced by Groq API."""
-        return enhancer_groq(
-            self.model.value, self.api_key, self.persona_instr, text
-        )
+        return enhancer_groq(self.model.value, self.api_key, self.persona_instr, text)
